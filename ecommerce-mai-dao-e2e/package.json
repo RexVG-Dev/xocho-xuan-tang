@@ -1,0 +1,10 @@
+{
+  "name": "@xocho-xuan-tang/ecommerce-mai-dao-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@xocho-xuan-tang/ecommerce-mai-dao"
+    ]
+  }
+}

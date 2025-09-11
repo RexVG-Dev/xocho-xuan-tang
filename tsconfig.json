@@ -8,6 +8,15 @@
     },
     {
       "path": "./apps/system-cang-ku"
+    },
+    {
+      "path": "./ecommerce-mai-dao-e2e"
+    },
+    {
+      "path": "./ecommerce-mai-dao"
+    },
+    {
+      "path": "./ui"
     }
   ]
 }
