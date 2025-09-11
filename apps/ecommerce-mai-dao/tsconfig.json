@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
     "noEmit": true,
@@ -29,8 +29,8 @@
     "src/**/*.tsx",
     "src/**/*.js",
     "src/**/*.jsx",
-    "../ecommerce-mai-dao/.next/types/**/*.ts",
-    "../dist/ecommerce-mai-dao/.next/types/**/*.ts",
+    "../../apps/ecommerce-mai-dao/.next/types/**/*.ts",
+    "../../dist/apps/ecommerce-mai-dao/.next/types/**/*.ts",
     "next-env.d.ts"
   ],
   "exclude": [

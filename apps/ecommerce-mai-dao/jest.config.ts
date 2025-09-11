@@ -7,12 +7,12 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   displayName: '@xocho-xuan-tang/ecommerce-mai-dao',
-  preset: '../jest.preset.js',
+  preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../coverage/ecommerce-mai-dao',
+  coverageDirectory: '../../coverage/apps/ecommerce-mai-dao',
   testEnvironment: 'jsdom',
 };
 

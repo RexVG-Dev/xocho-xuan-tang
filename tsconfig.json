@@ -17,6 +17,12 @@
     },
     {
       "path": "./ui"
+    },
+    {
+      "path": "./apps/ecommerce-mai-dao-e2e"
+    },
+    {
+      "path": "./apps/ecommerce-mai-dao"
     }
   ]
 }
