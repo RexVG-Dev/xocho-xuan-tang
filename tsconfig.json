@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/system-cang-ku-e2e"
+    },
+    {
+      "path": "./apps/system-cang-ku"
+    }
+  ]
+}
