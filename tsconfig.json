@@ -10,13 +10,20 @@
       "path": "./apps/system-cang-ku"
     },
     {
-      "path": "./ecommerce-mai-dao-e2e"
-    },
-    {
-      "path": "./ecommerce-mai-dao"
-    },
-    {
       "path": "./ui"
+    },
+    {
+      "path": "./apps/ecommerce-mai-dao-e2e"
+    },
+    {
+      "path": "./apps/ecommerce-mai-dao"
     }
-  ]
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node10",
+      "customConditions": null
+    }
+  }
 }
