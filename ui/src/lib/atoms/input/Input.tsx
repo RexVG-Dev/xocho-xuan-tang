@@ -24,6 +24,12 @@ export const iconPositions = {
 } as const;
 export type IconPosition = typeof iconPositions[keyof typeof iconPositions];
 
+export const labelPositions = {
+  left: 'left',
+  top: 'top',
+} as const;
+export type LabelPosition = typeof labelPositions[keyof typeof labelPositions];
+
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   variantSize?: InputSize;
   color?: InputColor;
@@ -33,19 +39,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   label?: string;
   helperText?: string;
-  labelPosition?: 'top' | 'left';
+  labelPosition?: LabelPosition;
 }
 
 export function Input({
   label,
-  variantSize = 'md',
-  color = 'primary',
+  variantSize = inputSizes.md,
+  color = inputColor.primary,
   iconName,
-  iconPosition = 'left',
+  iconPosition = iconPositions.left,
   error,
   helperText,
   className,
-  labelPosition = 'top',
+  labelPosition = labelPositions.top,
   ...props
 }: InputProps) {
   const [value, setValue] = useState(props.value ?? '');
