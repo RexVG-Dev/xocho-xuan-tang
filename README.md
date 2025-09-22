@@ -80,3 +80,12 @@ And join the Nx community:
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+
+
+# Projects
+@xocho-xuan-tang/ecommerce-mai-dao-e2e
+@xocho-xuan-tang/system-cang-ku-e2e
+@xocho-xuan-tang/ecommerce-mai-dao
+@xocho-xuan-tang/system-cang-ku
+@xocho-xuan-tang/ui
