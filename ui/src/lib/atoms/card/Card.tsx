@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import clsx from 'clsx';
 
-import { BorderType, borderTypes } from './constants.js';
+import { BorderType, borderTypes } from './constants';
 
 export interface CardInterface {
   title?: string;

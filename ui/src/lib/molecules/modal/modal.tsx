@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { Card } from '../../atoms/card/Card';

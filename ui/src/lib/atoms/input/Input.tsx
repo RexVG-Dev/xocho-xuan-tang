@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from 'react';
+import { InputHTMLAttributes, useState } from 'react';
 import { clsx } from 'clsx';
 
 import { Icon } from '../icon/Icon';
@@ -131,7 +131,8 @@ export function Input({
             className={inputClasses}
             value={value}
             onChange={(e) => {
-              setValue(e.target.value);
+              const input = e.target as HTMLInputElement;
+              setValue(input.value);
               if (props.onChange) {
                 props.onChange(e);
               }
