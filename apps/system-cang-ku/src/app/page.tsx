@@ -1,3 +1,6 @@
+"use client"
+import { Button, Icon, Input } from './components/ui';
+
 export default function Index() {
   /*
    * Replace the elements below with your own.
@@ -12,6 +15,18 @@ export default function Index() {
             <h1>
               <span> Hello there, </span>
               Welcome @xocho-xuan-tang/system-cang-ku 👋
+              <div className='bg-blue-800 w-72 p-4 rounded-lg text-base text-white'>
+                <Icon name='add_white' size={24}/>
+                <Button variant='solid' color='primary'>
+                  Add something
+                </Button>
+                <Input
+                  placeholder='Type something...'
+                  label='Input label'
+                  iconName='arrowleft_white'
+                  variantSize='full'
+                />
+              </div>
             </h1>
           </div>
 
