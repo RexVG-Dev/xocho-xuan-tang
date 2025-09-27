@@ -6,18 +6,20 @@ import { useRouter } from 'next/navigation';
 import { Input, Button, Modal } from '../components/ui';
 import { sanitizeInput } from '../../utils/sanitize';
 import { apiFetch } from '../api';
+import { useLoading } from '../contexts/useLoading';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
+  const { isLoading, showLoader, hideLoader} = useLoading();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    setIsLoading(true);
+    showLoader();
 
     try {
       const data = await apiFetch('/login', {
@@ -36,7 +38,7 @@ function Login() {
       console.error('Login error:', err);
       setError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
     } finally {
-      setIsLoading(false);
+      hideLoader();
     }
   };
   return (
@@ -59,7 +61,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(sanitizeInput(e.target.value))}
-              placeholder="••••••••"
+              placeholder="••••••••••••"
               required
             />
           </div>

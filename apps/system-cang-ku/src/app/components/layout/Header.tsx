@@ -57,7 +57,7 @@ function Header() {
 
       {userInfo && (
         <div className="flex items-center gap-4">
-          <span className="text-gray-800 font-medium hidden sm:block">{formattedDate}</span>
+          <span className="text-gray-800 font-medium capitalize hidden sm:block">{formattedDate}</span>
           <div className="flex items-center justify-center h-10 w-10 bg-gray-200 rounded-full font-bold text-gray-600">
             {getInitials(userInfo.name)}
           </div>
