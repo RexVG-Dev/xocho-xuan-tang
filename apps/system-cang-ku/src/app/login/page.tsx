@@ -19,7 +19,9 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    showLoader();
+    showLoader({
+      type: 'login'
+    });
 
     try {
       const data = await apiFetch('/login', {
