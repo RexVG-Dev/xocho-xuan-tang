@@ -1,11 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '../ui';
+import { Button, NavItem } from '../ui';
 
-function Sidebar() {
+export function Sidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
@@ -17,18 +16,45 @@ function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-gray-800 text-white p-4 flex flex-col">
-      <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
+    <aside className="w-64 bg-white text-gray-800 pt-10 pb-4 px-4 mt-16 flex flex-col border-r border-gray-200">
+
+      <div className="px-3 mb-6">
+        <h3 className="text-2xl text-black font-bold text-gray-600 uppercase tracking-wider">
+          Menú
+        </h3>
+      </div>
+      
       <nav className="flex-grow">
         <ul>
-          <li className="mb-4"><Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link></li>
-          <li className="mb-4"><Link href="/products" className="hover:text-gray-300">Productos</Link></li>
-          <li className="mb-4"><Link href="/orders" className="hover:text-gray-300">Órdenes</Link></li>
-          <li className="mb-4"><Link href="/banners" className="hover:text-gray-300">Banners</Link></li>
+          <NavItem 
+            href="/dashboard" 
+            label="Inicio" 
+            iconName="home" 
+            iconNameWhite="home_white" 
+          />
+          <NavItem 
+            href="/products" 
+            label="Productos" 
+            iconName="packing" 
+            iconNameWhite="packing_white" 
+          />
+          <NavItem 
+            href="/banners" 
+            label="Banners" 
+            iconName="upload" 
+            iconNameWhite="upload_white" 
+          />
+          <NavItem 
+            href="/orders" 
+            label="Órdenes" 
+            iconName="orders" 
+            iconNameWhite="orders_white" 
+          />
         </ul>
       </nav>
+
       <Button onClick={handleLogout} color="danger">
-        Cerrar Sesión
+        Logout
       </Button>
     </aside>
   )
