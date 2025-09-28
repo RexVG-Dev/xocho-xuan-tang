@@ -1,8 +1,8 @@
 "use client"
 
-import Summary from "./summary";
-import LowProductsStock from "./lowProductsStock";
-import RecentOrders from "./recentOrders";
+import { Summary } from "./summary";
+import { LowProductsStock } from "./lowProductsStock";
+import { RecentOrders } from "./recentOrders";
 
 function Dashboard() {
   return (

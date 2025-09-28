@@ -46,7 +46,5 @@ export async function apiFetch(endpoint: string, options: ApiOptions = {}) {
   if (!response.ok) {
     throw new Error(data.message || `Error en la petición a ${endpoint}`);
   }
-
-  console.log('data: ', data);
   return data;
 }
