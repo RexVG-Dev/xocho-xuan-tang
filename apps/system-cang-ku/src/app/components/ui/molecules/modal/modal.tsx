@@ -60,8 +60,8 @@ export function Modal({
         <Card
           className={
             position === positionsModal.right 
-              ? 'h-full bg-white rounded-l-xl'
-              : 'bg-white'
+              ? 'h-full bg-white rounded-l-xl overflow-y-auto'
+              : 'bg-white overflow-y-auto'
           }
           title={title}
           border={border}

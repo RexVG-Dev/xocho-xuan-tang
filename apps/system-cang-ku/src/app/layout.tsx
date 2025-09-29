@@ -1,7 +1,9 @@
-import './global.css';
-
+import { OrderDetailsModalProvider } from './contexts/OrderDetailsModalContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { OrderDetailsModal } from './components/ui/organisms/orderDetailsModal/orderDetailsModal';
 import { GlobalSpinner } from './components/ui/organisms';
+
+import './global.css';
 
 export const metadata = {
   title: 'Welcome to ',
@@ -16,10 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <LoadingProvider>
-          {children}
-          <GlobalSpinner />
-        </LoadingProvider>
+        <OrderDetailsModalProvider>
+          <LoadingProvider>
+            {children}
+            <GlobalSpinner />
+            <OrderDetailsModal />
+          </LoadingProvider>
+        </OrderDetailsModalProvider>
       </body>
     </html>
   );
