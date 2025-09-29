@@ -21,7 +21,6 @@ export function LowProductsStockSkeleton() {
             </div>
             <div className="h-4 bg-gray-200 rounded w-1/6"></div>
           </div>
-          {/* Fila Falsa 3 */}
           <div className="flex items-center gap-4">
             <div className="h-10 w-10 bg-gray-200 rounded-md"></div>
             <div className="flex-1 space-y-2">

@@ -7,7 +7,6 @@ import { Card, Button, Icon } from "@/app/components/ui";
 import { apiFetch } from '@/app/api';
 import { LowProductsStockSkeleton } from './lowProductsStockSkeleton';
 
-
 interface Product {
   id: string;
   name: string;
@@ -115,7 +114,7 @@ export function LowProductsStock() {
         </Button>
         <Button
           onClick={handleNextPage}
-          // disabled={!data.hasMore}
+          disabled={!data.hasMore}
           size="sm"
           variant="ghost"
           icon={
@@ -131,4 +130,5 @@ export function LowProductsStock() {
     
   )
 }
+
 export default LowProductsStock

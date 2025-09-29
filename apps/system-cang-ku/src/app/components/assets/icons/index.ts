@@ -42,6 +42,7 @@ import UpLoadIconWhite from './up-load_white.svg';
 import UpIconWhite from './up_white.svg';
 import LogoIconWhite from './xocho_white.svg';
 
+import ArrowRightIconRed from './arrow_right_red.svg';
 
 export {
   AddIcon,
@@ -86,4 +87,5 @@ export {
   UpLoadIconWhite,
   UpIconWhite,
   LogoIconWhite,
+  ArrowRightIconRed,
 };

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { formatDate } from '@/utils/dates';
 import { Icon, Button } from "../ui";
 
 interface UserInfo {
@@ -16,13 +17,8 @@ function Header() {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const date = new Date();
-  const optionMonth: Intl.DateTimeFormatOptions = { month: 'long' };
-  const month = date.toLocaleDateString('es-ES', optionMonth);
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear();
-
-  const formattedDate = `${day} ${month} ${year}`;
+  const formattedDate = formatDate(date);
 
   useEffect(() => {
     const storedUserInfo = localStorage.getItem('user_info');
