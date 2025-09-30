@@ -65,3 +65,11 @@ export interface OrderDetailsInterface {
   orderDetails: OrderDetailInterface[];
   orderStatusHistory: OrderStatusHistoryInterface[];
 }
+
+export interface OrderInterface {
+  id: string;
+  total: number;
+  status: OrderStatus;
+  tracking_number: string;
+  order_date: string;
+}
