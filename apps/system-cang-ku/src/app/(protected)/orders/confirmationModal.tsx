@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Modal, Button } from '@/app/components/ui';
 
 interface ConfirmationModalProps {
@@ -23,8 +25,14 @@ export function ConfirmationModal({
   cancelText = 'Cancelar',
   isLoading = false,
 }: ConfirmationModalProps) {
+  const [isOpenState, setIsOpenState] = useState(isOpen);
+  const handleOnConfirm = () => {
+    onConfirm();
+    setIsOpenState(false);
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onCancel}>
+    <Modal isOpen={isOpenState} onClose={onCancel}>
       <div className="p-6 text-center">
         <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         <p className="mt-2 text-sm text-gray-500">{message}</p>
@@ -32,7 +40,7 @@ export function ConfirmationModal({
           <Button onClick={onCancel} color="secondary" disabled={isLoading}>
             {cancelText}
           </Button>
-          <Button onClick={onConfirm} color="danger" isLoading={isLoading} disabled={isLoading}>
+          <Button onClick={handleOnConfirm} color="danger" isLoading={isLoading} disabled={isLoading}>
             {confirmText}
           </Button>
         </div>

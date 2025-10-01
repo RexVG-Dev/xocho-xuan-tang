@@ -11,7 +11,7 @@ export function GlobalSpinner() {
   }
 
   return (
-    <Modal isOpen={true}>
+    <Modal isOpen={true} zIndex="z-50">
       <div className="flex flex-col items-center justify-center gap-6 p-8 text-center">
         <h2 className="text-xl font-semibold text-gray-700">
           {message}

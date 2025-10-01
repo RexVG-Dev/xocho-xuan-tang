@@ -20,10 +20,15 @@ export function OrderColumn({
   title,
   iconName,
   colorClass,
-  orders
+  orders,
+  onDeleteClick
 }: OrderColumnProps) {
   const { setNodeRef } = useDroppable({
     id: status,
+    data: {
+      type: 'COLUMN',
+      status: status,
+    }
   });
 
   const userRole = useMemo(() => {
@@ -34,17 +39,13 @@ export function OrderColumn({
     return null;
   }, []);
 
-  const handleDeleteClick = (orderId: string) => console.log(`Delete for ${orderId}`);
-
   return (
     <div className="flex flex-col">
-      {/* Encabezado de la Columna */}
       <div className={`flex items-center gap-4 py-6 px-4 rounded-t-lg text-white ${colorClass}`}>
         <Icon name={iconName} size={32} />
         <h2 className="text-lg font-bold">{title} ({orders.length})</h2>
       </div>
 
-      {/* Contenedor de las Tarjetas */}
       <div ref={setNodeRef} className="bg-gray-100 p-4 rounded-b-lg space-y-4 flex-grow min-h-[300px]">
         <SortableContext
           items={orders.map(order => order.id)}
@@ -55,10 +56,8 @@ export function OrderColumn({
               <OrderCard
                 key={order.id}
                 order={order}
-                // Lógica de ejemplo para el botón de borrar
-                // El botón de borrar solo se muestra si el estado es 'delivered' o 'cancelled' y el usuario tipo admin
                 showDeleteButton={(order.status === 'delivered' || order.status === 'cancelled') && userRole === 'admin'}
-                onDeleteClick={handleDeleteClick}
+                onDeleteClick={onDeleteClick}
               />
             ))
           }

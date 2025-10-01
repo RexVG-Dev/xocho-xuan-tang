@@ -29,7 +29,10 @@ export function OrderCard({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: order.id, data: { ...order, status: order.status } });
+  } = useSortable({
+    id: order.id,
+    data: { ...order, status: order.status } 
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -62,7 +65,7 @@ export function OrderCard({
                 variant="ghost"
                 size="sm"
                 icon={<Icon name="arrowright" size={20} />}
-                onClick={() => openModal(order.id)}
+                onClick={(e) => { e.stopPropagation(); openModal(order.id); }}
                 className="hover:bg-gray-200"
               />
               {showDeleteButton && (
@@ -70,7 +73,7 @@ export function OrderCard({
                   variant="ghost"
                   size="sm"
                   icon={<Icon name="delete" size={20} className="text-gray-400 hover:text-red-600" />}
-                  onClick={() => onDeleteClick(order.id)}
+                  onClick={(e) => { e.stopPropagation(); onDeleteClick(order.id); }}
                   className="hover:bg-gray-200"
                 />
               )}

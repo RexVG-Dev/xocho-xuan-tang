@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, HTMLAttributes } from 'react';
 import clsx from 'clsx';
 
 import { Card } from '../../atoms/card/Card';
@@ -12,11 +12,12 @@ export const positionsModal = {
 
 export type PositionsModalType = typeof positionsModal[keyof typeof positionsModal];
 
-export interface ModalInterface {
+export interface ModalInterface extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   isOpen?: boolean;
   border?: BorderCardType;
   position?: PositionsModalType;
+  zIndex?: string;
   onClose?: () => void;
   children?: ReactNode;
 }
@@ -26,6 +27,7 @@ export function Modal({
   isOpen,
   border = borderCardTypes.none,
   position = positionsModal.center,
+  zIndex = 'z-50',
   onClose,
   children
 
@@ -48,6 +50,7 @@ export function Modal({
     'transform scale-95 opacity-0': !isOpen,
     'w-full max-w-xl mx-4 my-8': position === 'center',
     'rounded-l-lg rounded-r-none w-full md:w-1/3 h-full': position === 'right',
+    zIndex,
   });
 
   return (
