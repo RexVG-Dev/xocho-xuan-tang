@@ -43,6 +43,8 @@ import UpIconWhite from './up_white.svg';
 import LogoIconWhite from './xocho_white.svg';
 
 import ArrowRightIconRed from './arrow_right_red.svg';
+import ErrorIconRed from './error_red.svg';
+import DoneIconGreen from './done_green.svg';
 
 export {
   AddIcon,
@@ -88,4 +90,6 @@ export {
   UpIconWhite,
   LogoIconWhite,
   ArrowRightIconRed,
+  ErrorIconRed,
+  DoneIconGreen
 };

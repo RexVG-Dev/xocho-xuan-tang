@@ -1,7 +1,7 @@
 import { OrderDetailsModalProvider } from './contexts/OrderDetailsModalContext';
 import { LoadingProvider } from './contexts/LoadingContext';
-import { OrderDetailsModal } from './components/ui/organisms/orderDetailsModal/orderDetailsModal';
-import { GlobalSpinner } from './components/ui/organisms';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { GlobalSpinner, OrderDetailsModal, NotificationModal } from './components/ui/organisms';
 
 import './global.css';
 
@@ -18,13 +18,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <OrderDetailsModalProvider>
-          <LoadingProvider>
-            {children}
-            <GlobalSpinner />
-            <OrderDetailsModal />
-          </LoadingProvider>
-        </OrderDetailsModalProvider>
+        <NotificationProvider>  
+          <OrderDetailsModalProvider>
+            <LoadingProvider>
+              
+                <GlobalSpinner />
+                <OrderDetailsModal />
+                <NotificationModal />
+              {children}
+            </LoadingProvider>
+          </OrderDetailsModalProvider>
+        </NotificationProvider>
       </body>
     </html>
   );

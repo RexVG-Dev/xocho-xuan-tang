@@ -41,7 +41,9 @@ import {
   UpLoadIconWhite,
   UpIconWhite,
   LogoIconWhite,
-  ArrowRightIconRed
+  ArrowRightIconRed,
+  ErrorIconRed,
+  DoneIconGreen,
 } from '../../../assets/icons/index.js';
 
 export const ICONS = {
@@ -88,4 +90,6 @@ export const ICONS = {
   up_white: UpIconWhite,
   logo_white: LogoIconWhite,
   arrowright_red: ArrowRightIconRed,
+  error_red: ErrorIconRed,
+  done_green: DoneIconGreen,
 };

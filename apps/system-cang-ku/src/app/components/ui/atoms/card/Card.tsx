@@ -1,9 +1,8 @@
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef, HTMLAttributes } from 'react';
 import clsx from 'clsx';
 
 import { BorderCardType, borderCardTypes } from './constants.js';
-
-export interface CardInterface {
+export interface CardInterface extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   border?: BorderCardType;
   padding?: boolean;
@@ -12,16 +11,18 @@ export interface CardInterface {
   children: ReactNode;
 };
 
-export function Card(
+export const Card = forwardRef<HTMLDivElement, CardInterface>( function Card(
   {
     title,
     border = borderCardTypes.none,
     padding = true,
     rounded = true,
     className = '',
-    children
-  }: CardInterface
-) {
+    children,
+    ...props
+  },
+  ref
+){
   const cardStylesProps = clsx( 'shadow-lg', {
       'border-4': border !== 'none',
       'border-red-500': border === 'error',
@@ -38,7 +39,7 @@ export function Card(
   );
 
   return (
-    <div className={cardStylesProps}>
+    <div ref={ref} className={cardStylesProps} {...props}>
       {title && (
         <div className={titleClasses}>
           {title}
@@ -49,6 +50,6 @@ export function Card(
       </div>
     </div>
   );
-}
+});
 
-export default Card;
+Card.displayName = 'Card';
