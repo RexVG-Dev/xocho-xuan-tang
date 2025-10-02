@@ -62,16 +62,20 @@ export function OrderCard({
             <p className={trakingTextStyle}>#{order.tracking_number}</p>
             <div className="flex items-end gap-2">
               <IconButton
-                variant="ghost"
+                variant="solid"
                 size="sm"
+                color='light'
+                rounded='lg'
                 icon={<Icon name="arrowright" size={20} />}
                 onClick={(e) => { e.stopPropagation(); openModal(order.id); }}
-                className="hover:bg-gray-200"
+                className="hover:bg-gray-200 p-1"
               />
               {showDeleteButton && (
                 <IconButton
-                  variant="ghost"
+                  variant="solid"
                   size="sm"
+                  color='light'
+                  rounded='lg'
                   icon={<Icon name="delete" size={20} className="text-gray-400 hover:text-red-600" />}
                   onClick={(e) => { e.stopPropagation(); onDeleteClick(order.id); }}
                   className="hover:bg-gray-200"

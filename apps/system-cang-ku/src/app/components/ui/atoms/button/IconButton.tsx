@@ -33,8 +33,7 @@ export function IconButton({
   disabled,
   ...props
 }: IconButtonProps) {
-
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-200 ease-in-out focus:outline-none focus:ring-0 active:border-none';
 
   const sizeClasses = {
     xs: 'p-1 text-xs',
@@ -45,24 +44,34 @@ export function IconButton({
 
   const colorClasses = {
     primary: {
-      solid: 'bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-indigo-500',
+      solid: 'bg-indigo-500 text-white hover:bg-indigo-600',
       outline: 'bg-transparent text-indigo-500 border-2 border-indigo-500 hover:bg-indigo-50',
       ghost: 'bg-transparent text-indigo-500 hover:bg-indigo-50',
     },
     success: {
-      solid: 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500',
+      solid: 'bg-green-500 text-white hover:bg-green-600',
       outline: 'bg-transparent text-green-500 border-2 border-green-500 hover:bg-green-50',
       ghost: 'bg-transparent text-green-500 hover:bg-green-50',
     },
     danger: {
-      solid: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
+      solid: 'bg-red-500 text-white hover:bg-red-600',
       outline: 'bg-transparent text-red-500 border-2 border-red-500 hover:bg-red-50',
       ghost: 'bg-transparent text-red-500 hover:bg-red-50',
     },
     secondary: {
-      solid: 'bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500',
+      solid: 'bg-gray-500 text-white hover:bg-gray-600',
       outline: 'bg-transparent text-gray-500 border-2 border-gray-500 hover:bg-gray-50',
       ghost: 'bg-transparent text-gray-500 hover:bg-gray-50',
+    },
+    dark: {
+      solid: 'bg-black text-white hover:bg-gray-900',
+      outline: 'bg-transparent text-black border-2 border-black hover:bg-gray-100',
+      ghost: 'bg-transparent text-black hover:bg-gray-100',
+    },
+    light: {
+      solid: 'bg-[#F4F4F2] text-black hover:bg-gray-200',
+      outline: 'bg-transparent text-black border-2 border-[#F4F4F2] hover:bg-[#F4F4F2]',
+      ghost: 'bg-transparent text-black hover:bg-[#F4F4F2]',
     },
     none: {
       solid: '',

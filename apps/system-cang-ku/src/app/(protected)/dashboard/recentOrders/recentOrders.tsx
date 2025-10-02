@@ -114,7 +114,7 @@ export function RecentOrders() {
             {data.orders.map((order) => (
               <tr 
                 key={order.id} 
-                className="hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+                className="hover:bg-gray-300 cursor-pointer transition-colors duration-200"
                 onClick={() => handleRowClick(order.id)}
               >
                 <td className="px-4 py-3 font-medium text-gray-800">#{order.tracking_number}</td>

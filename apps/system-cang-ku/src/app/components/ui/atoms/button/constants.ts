@@ -27,6 +27,8 @@ export const buttonColors = {
   success: 'success',
   danger: 'danger',
   secondary: 'secondary',
+  dark: 'dark',
+  light: 'light',
   none: 'none',
 } as const;
 export type ButtonColor = typeof buttonColors[keyof typeof buttonColors];
