@@ -58,7 +58,7 @@ function Header() {
             {getInitials(userInfo.name)}
           </div>
           <span className="text-gray-800 font-medium hidden sm:block">{userInfo.name}</span>
-          <Button onClick={handleLogout} color="secondary" size="sm">
+          <Button onClick={handleLogout} color="dark" size="sm">
             Logout
           </Button>
         </div>

@@ -18,15 +18,14 @@ export function Accordion({ title, children, startOpen = false }: AccordionProps
       <Button
         variant='ghost'
         color="none"
-        
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center px-0 py-3 text-left font-semibold text-gray-800 focus:outline-none focus:ring-0"
+        className="w-full flex justify-between items-center px-0 py-3 text-left font-semibold text-gray-800"
       >
         {title}
         <Icon
           name="down"
-          size={20}
-          className={clsx('transition-transform duration-300', {
+          size={25}
+          className={clsx('transition-transform duration-300 bg-gray-100 p-1 rounded-md', {
             'transform rotate-180': isOpen,
           })}
         />
