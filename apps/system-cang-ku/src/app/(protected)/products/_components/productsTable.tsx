@@ -5,9 +5,15 @@ import { ProductInterface } from '../constants';
 
 interface ProductsTableProps {
   products: ProductInterface[];
+  onEdit?: (product: ProductInterface) => void;
+  onDelete?: (product: ProductInterface) => void;
 }
 
-export function ProductsTable({ products }: ProductsTableProps) {
+export function ProductsTable({
+  products,
+  onEdit,
+  onDelete,
+}: ProductsTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-left text-gray-600">
@@ -39,9 +45,24 @@ export function ProductsTable({ products }: ProductsTableProps) {
               <td className="px-4 py-3">{formatCurrency(parseFloat(product.price))}</td>
               <td className="px-4 py-3">{product.categories.map(c => c.name).join(', ')}</td>
               <td className="px-4 py-3 text-right">
+                {/**
+                 * TODO: Proteger estos botones con permisos admin 
+                 */}
                 <div className="flex justify-end gap-2 items-center">
-                  <IconButton color="dark" rounded="md" size="xs" icon={<Icon name="edit_white" size={20} />}/>
-                  <IconButton color="danger" rounded="md" size="xs" icon={<Icon name="delete_white" size={20} />}/>
+                  <IconButton
+                    color="dark"
+                    rounded="md"
+                    size="xs"
+                    icon={<Icon name="edit_white" size={20} />}
+                    onClick={() => onEdit && onEdit(product)}
+                  />
+                  <IconButton
+                    color="danger"
+                    rounded="md"
+                    size="xs"
+                    icon={<Icon name="delete_white" size={20} />}
+                    onClick={() => onDelete && onDelete(product)}
+                  />
                 </div>
               </td>
             </tr>

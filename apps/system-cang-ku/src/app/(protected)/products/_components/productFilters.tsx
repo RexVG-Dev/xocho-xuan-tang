@@ -19,6 +19,8 @@ interface ProductFiltersProps {
   onSeasonChange: (value: string) => void;
   discountStatus: DiscountStatus;
   onDiscountChange: (value: DiscountStatus) => void;
+  onCreate: () => void;
+  onBulkLoad: () => void;
 }
 
 export function ProductFilters(
@@ -33,6 +35,8 @@ export function ProductFilters(
   onSeasonChange,
   discountStatus,
   onDiscountChange,
+  onCreate,
+  onBulkLoad,
 }: ProductFiltersProps
 ) {
   return (
@@ -42,10 +46,10 @@ export function ProductFilters(
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Gestión de productos</h1>
           <div className="flex md:hidden gap-2">
-            <Button color="dark" size='sm' variant="outline">
+            <Button color="dark" size='sm' variant="outline" onClick={onBulkLoad}>
               Carga masiva
             </Button>
-            <Button color="danger">
+            <Button color="danger" onClick={onCreate}>
               + Crear nuevo
             </Button>
           </div>
@@ -53,10 +57,10 @@ export function ProductFilters(
         
         {/* Acciones Superiores */}
         <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <Button color="dark" variant="outline" className="hidden md:flex">
+          <Button color="dark" variant="outline" className="hidden md:flex" onClick={onBulkLoad}>
             Carga masiva de productos
           </Button>
-          <Button color="danger" className="hidden md:flex">
+          <Button color="danger" className="hidden md:flex" onClick={onCreate}>
             + Crear nuevo producto
           </Button>
           <div>

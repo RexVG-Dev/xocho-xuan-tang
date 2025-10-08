@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useLoading } from '@/app/contexts/useLoading';
+import { useNotification } from '@/app/contexts/useNotification';
 import { apiFetch } from '@/app/api';
 import { useDebounce } from '@/app/hooks/useDebounce';
 import { CategoryInterface } from '@/shared/types/category';
 
 import { Card } from '@/app/components/ui';
+import { ConfirmationModal } from '@/app/components/ui/organisms';
 import { ProductFilters } from './_components/productFilters';
 import { ProductsTable } from './_components/productsTable';
 import { PaginationControls } from './_components/paginationControls';
@@ -17,6 +20,8 @@ import { ProductInterface, DiscountStatus } from './constants';
 const PAGE_SIZE = 10;
 
 function Products() {
+  const router = useRouter();
+  const { showNotification } = useNotification();
   const [products, setProducts] = useState<ProductInterface[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -27,11 +32,13 @@ function Products() {
   const [seasons, setSeasons] = useState<CategoryInterface[]>([]);
 
   const [error, setError] = useState<string | null>(null);
-  const { showLoader, hideLoader } = useLoading();
+  const { showLoader, hideLoader, isLoading } = useLoading();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [deletingProduct, setDeletingProduct] = useState<ProductInterface | null>(null);
 
   useEffect(() => {
     async function fetchFilterData() {
@@ -84,6 +91,38 @@ function Products() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm, selectedCategory, selectedSeason, discountStatus, currentPage]);
 
+  const handleCreate = () => router.push('/products/new');
+  const handleBulkLoad = () => router.push('/products/bulk-load');
+  const handleEdit = (product: ProductInterface) => router.push(`/products/edit/${product.id}`);
+
+  const handleDeleteClick = (product: ProductInterface) => {
+    setDeletingProduct(product);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingProduct) return;
+
+    showLoader({type: 'delete'});
+    try {
+      await apiFetch(`/products/${deletingProduct.id}`, {
+        method: 'DELETE',
+        requiresAuth: true,
+      });
+
+      // Actualizar la UI eliminando el producto del estado
+      setProducts(prev => prev.filter(p => p.id !== deletingProduct.id));
+      setTotalProducts(prev => prev - 1);
+      showNotification({ type: 'success', message: `Producto "${deletingProduct.name}" eliminado.` });
+
+    } catch (err) {
+      console.error("Fallo al eliminar el producto", err);
+      showNotification({ type: 'error' });
+    } finally {
+      setDeletingProduct(null);
+      hideLoader();
+    }
+  };
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -107,13 +146,31 @@ function Products() {
         onSeasonChange={setSelectedSeason}
         discountStatus={discountStatus}
         onDiscountChange={setDiscountStatus}
+        onCreate={handleCreate}
+        onBulkLoad={handleBulkLoad}
       />
-      <ProductsTable products={products} />
+      <ProductsTable
+        products={products}
+        onEdit={handleEdit}
+        onDelete={handleDeleteClick}
+      />
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
+      {deletingProduct && (
+        <ConfirmationModal
+          isOpen={!!deletingProduct}
+          title="Confirmar Eliminación"
+          message={`¿Estás seguro de que quieres eliminar permanentemente el producto "${deletingProduct.name}"? Esta acción no se puede deshacer.`}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeletingProduct(null)}
+          isLoading={isLoading}
+          confirmText="Eliminar"
+        />
+      )}
     </Card>
   );
 }
