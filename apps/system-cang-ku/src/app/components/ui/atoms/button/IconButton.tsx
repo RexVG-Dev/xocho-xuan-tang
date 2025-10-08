@@ -31,6 +31,7 @@ export function IconButton({
   icon,
   isLoading = false,
   disabled,
+  children,
   ...props
 }: IconButtonProps) {
   const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-200 ease-in-out focus:outline-none focus:ring-0 active:border-none';
@@ -117,6 +118,7 @@ export function IconButton({
           : null
         )
       }
+      { children && <span>{children}</span>}
     </button>
   )
 }

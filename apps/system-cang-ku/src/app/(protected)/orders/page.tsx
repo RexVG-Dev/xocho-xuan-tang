@@ -15,8 +15,8 @@ import { apiFetch } from '@/app/api';
 import { useLoading } from '@/app/contexts/useLoading';
 import { useNotification } from '@/app/contexts/useNotification';
 import { Card } from '@/app/components/ui';
+import { ConfirmationModal } from '@/app/components/ui/organisms';
 import { OrderInterface, OrderStatus } from '@/shared/interfaces';
-import { ConfirmationModal } from './confirmationModal';
 import { OrderColumn } from './orderColumn';
 import { OrderCard } from './orderCard'; 
 
