@@ -14,6 +14,8 @@ import { PaginationControls } from './_components/paginationControls';
 
 import { ProductInterface, DiscountStatus } from './constants';
 
+const PAGE_SIZE = 10;
+
 function Products() {
   const [products, setProducts] = useState<ProductInterface[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,6 +30,8 @@ function Products() {
   const { showLoader, hideLoader } = useLoading();
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function fetchFilterData() {
@@ -61,14 +65,14 @@ function Products() {
         if (discountStatus === 'with') params.append('hasDiscount', 'true');
         if (discountStatus === 'without') params.append('hasDiscount', 'false');
 
-        // Paginación (por ahora fija, se implementará en Fase 3)
-        params.append('skip', '0');
-        params.append('take', '10');
+        const skip = (currentPage - 1) * PAGE_SIZE;
+        params.append('skip', String(skip));
+        params.append('take', String(PAGE_SIZE));
 
         // 2. Llamar a la API
         const data = await apiFetch(`/products?${params.toString()}`, { requiresAuth: true });
         setProducts(data.products || []);
-        // Aquí también guardaríamos los datos de paginación: setTotal(data.total), etc.
+        setTotalProducts(data.total || 0);
       } catch (err) {
         setError('No se pudieron cargar los productos.');
         console.error(err);
@@ -78,7 +82,13 @@ function Products() {
     }
     fetchProducts();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm, selectedCategory, selectedSeason, discountStatus]);
+  }, [debouncedSearchTerm, selectedCategory, selectedSeason, discountStatus, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const totalPages = Math.ceil(totalProducts / PAGE_SIZE);
 
   if (error) {
     return <Card className="bg-white"><p className="text-center text-red-500 py-10">{error}</p></Card>;
@@ -99,7 +109,11 @@ function Products() {
         onDiscountChange={setDiscountStatus}
       />
       <ProductsTable products={products} />
-      <PaginationControls />
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </Card>
   );
 }
