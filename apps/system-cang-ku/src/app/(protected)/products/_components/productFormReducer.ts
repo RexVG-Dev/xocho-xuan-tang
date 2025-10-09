@@ -32,6 +32,7 @@ type Action =
   | { type: 'TOGGLE_CATEGORY'; id: string }
   | { type: 'SET_IMAGES'; images: ProductFormState['images'] }
   | { type: 'SET_MAIN_IMAGE'; index: number }
+  | { type: 'REMOVE_IMAGE'; index: number }
   | { type: 'LOAD_PRODUCT'; product: any };
 
 export function productFormReducer(state: ProductFormState, action: Action): ProductFormState {
@@ -55,6 +56,21 @@ export function productFormReducer(state: ProductFormState, action: Action): Pro
     case 'SET_MAIN_IMAGE':
       { const newImages = state.images.map((img, i) => ({ ...img, isMain: i === action.index }));
       return { ...state, images: newImages }; }
+
+    case 'REMOVE_IMAGE': {
+      const newImages = [...state.images];
+      // Reemplazamos el slot con el valor inicial vacío
+      newImages[action.index] = { file: null, url: '', isMain: false };
+
+      // Si la imagen eliminada era la principal, designamos una nueva si es posible
+      if (state.images[action.index].isMain) {
+        const firstAvailableImageIndex = newImages.findIndex(img => img.file);
+        if (firstAvailableImageIndex !== -1) {
+          newImages[firstAvailableImageIndex].isMain = true;
+        }
+      }
+      return { ...state, images: newImages };
+    }
 
     // Acción para cargar datos en modo edición
     case 'LOAD_PRODUCT':
