@@ -65,10 +65,6 @@ export function Orders() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    console.log('Confirmation state changed: ', confirmation);
-  }, [confirmation])
-
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -150,7 +146,6 @@ export function Orders() {
 
   const handleDeleteClick = (orderId: string) => {
     const orderToDelete = COLUMN_ORDER.flatMap(status => orders[status]).find(order => order.id === orderId);
-    console.log('orderToDelete', orderToDelete);
     if (orderToDelete) {
       setDeletingOrder(orderToDelete);
     }

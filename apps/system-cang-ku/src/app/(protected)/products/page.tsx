@@ -43,13 +43,11 @@ function Products() {
   useEffect(() => {
     async function fetchFilterData() {
       try {
-        // Asumimos un endpoint /catalog que devuelve todas las categorías y temporadas
         const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: false });
         setCategories(allCategories.filter(c => c.type === 'category'));
         setSeasons(allCategories.filter(c => c.type === 'season'));
       } catch (err) {
         console.error("Fallo al cargar los datos para los filtros", err);
-        // Opcional: mostrar una notificación de error
       }
     }
     fetchFilterData();
@@ -67,7 +65,7 @@ function Products() {
         if (selectedCategory) params.append('categoryId', selectedCategory);
         
         // El API espera los 'codes' de las temporadas
-        if (selectedSeason) params.append('categoryCodes', selectedSeason);
+        if (selectedSeason) params.append('categoryId', selectedSeason);
 
         if (discountStatus === 'with') params.append('hasDiscount', 'true');
         if (discountStatus === 'without') params.append('hasDiscount', 'false');

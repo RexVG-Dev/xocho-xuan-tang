@@ -70,7 +70,6 @@ export function ProductFilters(
               iconPosition="right"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              // El icono se podría añadir como prop en tu componente Input
             />
           </div>
         </div>
@@ -97,7 +96,7 @@ export function ProductFilters(
             onChange={(e) => onSeasonChange(e.target.value)}
           >
             <option value="">Temporada</option>
-            {seasons.map(sea => <option key={sea.id} value={sea.code}>{sea.name}</option>)}
+            {seasons.map(sea => <option key={sea.id} value={sea.id}>{sea.name}</option>)}
           </select>
         </div>
         <div className="flex items-center gap-2">
