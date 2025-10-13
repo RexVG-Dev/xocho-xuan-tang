@@ -2,13 +2,15 @@
 
 import { useReducer, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import clsx from 'clsx';
+import { useLoading } from '@/app/contexts/useLoading';
+import { useNotification } from '@/app/contexts/useNotification';
 
 import { apiFetch } from '@/app/api';
-import { Card, Icon, Input, Button } from '@/app/components/ui';
+import { Button, Card, Icon, Input } from '@/app/components/ui';
 import { CategoryInterface } from '@/shared/types/category';
 import { productFormReducer, initialState } from './productFormReducer';
 import { ImageUploader } from './imageUploader';
+import { compressImage } from '@/utils/compressImage';
 
 
 interface ProductFormProps {
@@ -18,6 +20,8 @@ interface ProductFormProps {
 
 export function ProductForm({ mode, productId }: ProductFormProps) {
   const router = useRouter();
+  const { showLoader, hideLoader } = useLoading();
+  const { showNotification } = useNotification();
   const [state, dispatch] = useReducer(productFormReducer, initialState);
   const [categories, setCategories] = useState<CategoryInterface[]>([]);
   const [seasons, setSeasons] = useState<CategoryInterface[]>([]);
@@ -36,18 +40,154 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
   }, []);
 
   useEffect(() => {
-    if (mode === 'edit' && productId) {
-      // Lógica para cargar los datos del producto en modo edición
-      console.log('Fetching product with ID:', productId);
-      // const productData = await apiFetch(`/products/${productId}`);
-      // dispatch({ type: 'LOAD_PRODUCT', product: productData });
+    async function fetchProductData() {
+      if (mode === 'edit' && productId) {
+        showLoader({type: 'get'});
+        try {
+          const productData = await apiFetch(`/products/${productId}`, { requiresAuth: true });
+          dispatch({ type: 'LOAD_PRODUCT', product: productData });
+        } catch (err) {
+          console.error("Fallo al cargar el producto", err);
+          showNotification({ type: 'error', message: 'No se pudo cargar la información del producto.' });
+          router.push('/products');
+        } finally {
+          hideLoader();
+        }
+      }
     }
+    if (mode === 'edit' && productId) {
+      fetchProductData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, productId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form state submitted:', state);
-    // Aquí irá la lógica de subida de imágenes y envío a la API
+    showLoader({type: 'changes'});
+
+    try {
+      if ( mode === 'create' ) {
+        const formData = new FormData();
+
+        formData.append('name', state.name);
+        formData.append('description', state.description);
+        formData.append('sku', state.sku);
+        formData.append('stock', String(state.stock));
+        formData.append('price', String(state.price));
+
+        const allCategoryIds = [...state.categoryIds, state.seasonCode].filter(Boolean);
+        allCategoryIds.forEach(id => formData.append('category_ids', id));
+
+        if (state.discountType) {
+          formData.append('discount_type', state.discountType);
+          formData.append('discount_value', String(state.discountValue));
+        }
+
+         const mainImage = state.images.find(img => img.isMain && img.file);
+        if (mainImage) {
+          const compressedMain = await compressImage(mainImage.file as File);
+          formData.append('main_image', compressedMain);
+        }
+        const restImages = state.images.filter(img => !img.isMain && img.file);
+        if (restImages.length > 0) {
+          const compressionPromises = restImages.map(img => compressImage(img.file as File));
+          const compressedRest = await Promise.all(compressionPromises);
+          compressedRest.forEach(file => {
+            formData.append('rest_images', file);
+          });
+        }
+
+        await apiFetch('/products', {
+          method: 'POST',
+          body: formData,
+          isFormData: true,
+          requiresAuth: true,
+        });
+      } else {
+
+        // 1. Separar archivos nuevos de URLs existentes que se conservan
+        const newImageFilesData = state.images
+          .map((img, index) => ({ file: img.file, index }))
+          .filter(item => item.file instanceof File);
+        
+        let uploadedUrls: string[] = [];
+
+        // 2. Subir solo los archivos nuevos si existen
+        if (newImageFilesData.length > 0) {
+          const imageFormData = new FormData();
+          newImageFilesData.forEach(item => {
+            imageFormData.append('images', item.file as File);
+          });
+
+          const compressionPromises = newImageFilesData.map(item => compressImage(item.file as File));
+          const compressedFiles = await Promise.all(compressionPromises);
+
+          compressedFiles.forEach(file => {
+            imageFormData.append('images', file);
+          });
+
+          imageFormData.append('sku', state.sku);
+
+          const uploadResponse = await apiFetch('/upload/product-images', {
+            method: 'POST',
+            body: imageFormData,
+            isFormData: true,
+            requiresAuth: true,
+          });
+          uploadedUrls = uploadResponse.urls;
+        }
+
+        // 3. Reconstruir el estado final de las imágenes con las nuevas URLs
+        const finalImagesState = [...state.images];
+        let newUrlIndex = 0;
+        newImageFilesData.forEach(item => {
+          if (finalImagesState[item.index]) {
+            finalImagesState[item.index].url = uploadedUrls[newUrlIndex++];
+          }
+        });
+
+        // 4. Determinar la URL principal y las secundarias a partir del estado final
+        const mainImage = finalImagesState.find(img => img.isMain && img.url);
+        const mainImageUrl = mainImage?.url || '';
+        const otherImageUrls = finalImagesState
+          .filter(img => img.url && !img.isMain)
+          .map(img => img.url);
+
+        // 5. Construir el cuerpo JSON final para la petición de producto
+        const productPayload = {
+          name: state.name,
+          description: state.description,
+          sku: state.sku,
+          stock: String(state.stock),
+          price: String(state.price),
+          category_ids: [...state.categoryIds, state.seasonCode].filter(Boolean),
+          discount_type: state.discountType,
+          discount_value: String(state.discountValue),
+          main_image_url: mainImageUrl,
+          other_image_urls: otherImageUrls,
+        };
+
+        // 6. Enviar la petición PUT con el cuerpo JSON
+        await apiFetch(`/products/${productId}`, {
+          method: 'PUT',
+          body: productPayload,
+          isFormData: false, // Ahora es JSON
+          requiresAuth: true,
+        });
+      }
+      showNotification({ 
+          type: 'success', 
+          message: `Producto ${mode === 'edit' ? 'actualizado' : 'creado'} exitosamente.` 
+        });
+
+        router.push('/products');
+        router.refresh();
+    } catch (err: any) {
+      console.error(`Fallo al ${mode === 'create' ? 'crear' : 'actualizar'} el producto:`, err);
+      showNotification({ type: 'error', message: err.message || 'Ocurrió un error.' });
+    } finally {
+      hideLoader();
+    }
   };
 
   const handleGoBack = () => {
@@ -138,7 +278,7 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
                 onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'seasonCode', value: e.target.value })}
               >
                 <option value="">Seleccionar</option>
-                {seasons.map(sea => <option key={sea.id} value={sea.code}>{sea.name}</option>)}
+                {seasons.map(sea => <option key={sea.id} value={sea.id}>{sea.name}</option>)}
               </select>
             </div>
             

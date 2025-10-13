@@ -1,6 +1,5 @@
-import { CategoryInterface } from "@/shared/types/category";
-
 export interface ProductFormState {
+  id: string | null;
   name: string;
   description: string;
   sku: string;
@@ -10,11 +9,11 @@ export interface ProductFormState {
   categoryIds: string[];
   discountType: 'percentage' | 'amount' | null;
   discountValue: number | string;
-  // Para las imágenes, manejaremos los archivos y las URLs
   images: { file: File | null; url: string; isMain: boolean }[];
 }
 
 export const initialState: ProductFormState = {
+  id: null,
   name: '',
   description: '',
   sku: '',
@@ -49,8 +48,7 @@ export function productFormReducer(state: ProductFormState, action: Action): Pro
         ? state.categoryIds.filter(id => id !== action.id)
         : [...state.categoryIds, action.id];
       return { ...state, categoryIds: newCategoryIds }; }
-    
-    // Acciones para imágenes (las implementaremos en detalle en la Fase 3)
+
     case 'SET_IMAGES':
       return { ...state, images: action.images };
     case 'SET_MAIN_IMAGE':
@@ -59,12 +57,11 @@ export function productFormReducer(state: ProductFormState, action: Action): Pro
 
     case 'REMOVE_IMAGE': {
       const newImages = [...state.images];
-      // Reemplazamos el slot con el valor inicial vacío
+      const wasMain = newImages[action.index].isMain;
       newImages[action.index] = { file: null, url: '', isMain: false };
 
-      // Si la imagen eliminada era la principal, designamos una nueva si es posible
-      if (state.images[action.index].isMain) {
-        const firstAvailableImageIndex = newImages.findIndex(img => img.file);
+      if (wasMain) {
+        const firstAvailableImageIndex = newImages.findIndex(img => img.file || img.url);
         if (firstAvailableImageIndex !== -1) {
           newImages[firstAvailableImageIndex].isMain = true;
         }
@@ -73,9 +70,33 @@ export function productFormReducer(state: ProductFormState, action: Action): Pro
     }
 
     // Acción para cargar datos en modo edición
-    case 'LOAD_PRODUCT':
-      // Aquí irá la lógica para transformar los datos del producto al estado del formulario
-      return { ...state, ...action.product };
+    case 'LOAD_PRODUCT': {
+      const { product } = action;
+      const loadedImages = product.images.map((img: any) => ({
+        file: null,
+        url: img.image_url,
+        isMain: img.image_url === product.main_image_url,
+      }));
+
+      while (loadedImages.length < 5) {
+        loadedImages.push({ file: null, url: '', isMain: false });
+      }
+
+      return {
+        ...state,
+        id: product.id,
+        name: product.name || '',
+        description: product.description || '',
+        sku: product.sku || '',
+        stock: product.stock || '',
+        price: product.price || '',
+        seasonCode: product.categories.find((c: any) => c.type === 'season')?.id || '',
+        categoryIds: product.categories.filter((c: any) => c.type === 'category').map((c: any) => c.id),
+        discountType: product.discount_type || null,
+        discountValue: product.discount_value || '',
+        images: loadedImages,
+      };
+    }
 
     default:
       return state;

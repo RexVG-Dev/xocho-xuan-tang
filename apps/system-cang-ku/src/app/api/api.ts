@@ -15,7 +15,9 @@ export async function apiFetch(endpoint: string, options: ApiOptions = {}) {
 
   const headers: HeadersInit = {};
 
-  headers['Content-Type'] = 'application/json';
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (requiresAuth) {
     const token = localStorage.getItem('auth_token');
@@ -33,18 +35,23 @@ export async function apiFetch(endpoint: string, options: ApiOptions = {}) {
   };
 
   if (body) {
-    config.body = isFormData ? body as FormData : JSON.stringify(body);
+    config.body = isFormData ? (body as FormData) : JSON.stringify(body);
   }
 
   const response = await fetch(`/api${endpoint}`, config);
 
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Error desconocido' }));
+    throw new Error(errorData.message || 'Ocurrió un error en la petición.');
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
   /**
    * TODO: Verificar si esto causa problemas con respuestas que no son JSON con Delete
-   */
+  */
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || `Error en la petición a ${endpoint}`);
-  }
   return data;
 }

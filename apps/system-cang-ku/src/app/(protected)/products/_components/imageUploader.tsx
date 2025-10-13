@@ -25,7 +25,7 @@ export function ImageUploader({ images, dispatch }: ImageUploaderProps) {
     // Llenar los slots vacíos con las nuevas imágenes
     for (let i = 0; i < files.length && currentImageIndex < newImages.length; i++) {
         // Encontrar el próximo slot vacío
-        while(newImages[currentImageIndex] && newImages[currentImageIndex].file) {
+        while(newImages[currentImageIndex] && (newImages[currentImageIndex].file || newImages[currentImageIndex].url)) {
             currentImageIndex++;
             if (currentImageIndex >= newImages.length) break;
         }
@@ -41,8 +41,8 @@ export function ImageUploader({ images, dispatch }: ImageUploaderProps) {
     }
     
     // Asegurarse de que siempre haya una imagen principal si hay al menos una imagen
-    const hasMainImage = newImages.some(img => img.isMain);
-    const firstImageIndex = newImages.findIndex(img => img.file);
+    const hasMainImage = newImages.some(img => img.isMain && (img.file || img.url));
+    const firstImageIndex = newImages.findIndex(img => img.file || img.url);
     if (!hasMainImage && firstImageIndex !== -1) {
       newImages[firstImageIndex].isMain = true;
     }
@@ -81,13 +81,13 @@ export function ImageUploader({ images, dispatch }: ImageUploaderProps) {
         {images.map((image, index) => (
           <div
             key={index}
-            onClick={() => image.file && handleSetMain(index)}
+            onClick={() => (image.file || image.url) && handleSetMain(index)}
             className={clsx(
               'relative aspect-square rounded-lg flex items-center justify-center bg-gray-100 border-2 overflow-hidden group',
               {
                 'border-red-500 shadow-md': image.isMain,
                 'border-dashed border-gray-300': !image.isMain,
-                'cursor-pointer hover:border-red-300': image.file,
+                'cursor-pointer hover:border-red-300': (image.file || image.url),
               }
             )}
           >
@@ -116,8 +116,7 @@ export function ImageUploader({ images, dispatch }: ImageUploaderProps) {
             ) : (
               <Icon name="image" size={50} className="text-gray-400" />
             )}
-            
-            {/* Indicador de imagen principal */}
+
             {image.isMain && (
               <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-75 text-white text-xs text-center py-1 font-semibold">
                 Principal
