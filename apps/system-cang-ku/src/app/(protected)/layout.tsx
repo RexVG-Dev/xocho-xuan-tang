@@ -30,14 +30,14 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex w-fit min-w-full h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header />
-        <main className="flex-1 p-8 overflow-y-auto mt-16 mb-14">
+        <main className="flex-1 p-8 overflow-x-auto overflow-y-auto mt-16 mb-14">
           {children}
         </main>
-        <div className="fixed bottom-0 left-64 right-0">
+        <div className="fixed bottom-0 left-0 right-0">
           <Footer />
         </div>
       </div>

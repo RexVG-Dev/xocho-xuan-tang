@@ -204,7 +204,7 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
   };
 
   return (
-    <Card className="bg-white p-6 shadow-md max-w-[1600px] mx-auto space-y-6">
+    <Card className="bg-white p-6 shadow-md max-w-fit mx-auto space-y-6">
       <div>
         <Button
           variant="ghost"
