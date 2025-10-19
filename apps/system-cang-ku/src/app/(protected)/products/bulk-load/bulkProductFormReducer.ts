@@ -44,6 +44,11 @@ export function bulkProductFormReducer(state: BulkFormState, action: Action): Bu
         return { ...row, categoryIds: newCategoryIds };
       });
 
+    case 'SET_ROW_IMAGES':
+      return state.map((row, index) =>
+        index === action.rowIndex ? { ...row, images: action.images } : row
+      );
+
     case 'SET_ROW_MAIN_IMAGE':
       return state.map((row, index) => {
         if (index !== action.rowIndex) return row;

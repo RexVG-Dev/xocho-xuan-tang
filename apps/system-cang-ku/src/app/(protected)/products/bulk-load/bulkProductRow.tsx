@@ -24,6 +24,15 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
     dispatch({ type: 'TOGGLE_ROW_CATEGORY', rowIndex, categoryId });
   };
 
+  const handleDiscountChange = (value: 'percentage' | 'amount') => {
+    if (rowData.discountType === value) {
+      handleFieldChange('discountType', null);
+      handleFieldChange('discountValue', ''); 
+    } else {
+      handleFieldChange('discountType', value);
+    }
+  };
+
   const imageUploaderDispatch = (action: any) => {
     switch(action.type) {
       case 'SET_IMAGES':
@@ -81,6 +90,29 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
           onChange={(e) => handleFieldChange('stock', e.target.value)}
           className="flex-1"
         />
+
+        <div className="w-48 border border-gray-300 rounded-md flex-1 min-w-[220px] relative">
+          <Accordion title="Descuento" padding={false}>
+            <div className="p-4 absolute bg-gray-50 rounded-md z-10 w-[400px] text-left space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Descuento</label>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center"><input type="radio" name={`discountType-${rowIndex}`} value="percentage" checked={rowData.discountType === 'percentage'} onClick={() => handleDiscountChange('percentage')} readOnly /><span className="ml-2">Porcentaje</span></label>
+                  <label className="flex items-center"><input type="radio" name={`discountType-${rowIndex}`} value="amount" checked={rowData.discountType === 'amount'} onClick={() => handleDiscountChange('amount')} readOnly /><span className="ml-2">Monto</span></label>
+                </div>
+              </div>
+              <Input
+                label="Valor del Descuento"
+                type="number"
+                placeholder="0.00"
+                disabled={!rowData.discountType}
+                value={rowData.discountValue}
+                onChange={(e) => handleFieldChange('discountValue', e.target.value)}
+              />
+            </div>
+          </Accordion>
+        </div>
+
         <select
           className="w-48 p-2 border border-gray-300 rounded-md flex-1"
           value={rowData.seasonCode}
