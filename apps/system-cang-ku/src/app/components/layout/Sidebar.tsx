@@ -16,7 +16,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white text-gray-800 pt-10 pb-4 px-4 mt-16 flex flex-col border-r border-gray-200">
+    <aside className="w-64 min-w-64 bg-white text-gray-800 pt-10 pb-20 px-4 mt-16 flex flex-col border-r border-gray-200">
 
       <div className="px-3 mb-6">
         <h3 className="text-2xl text-black font-bold text-gray-600 uppercase tracking-wider">
@@ -53,7 +53,7 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <Button onClick={handleLogout} color="danger">
+      <Button onClick={handleLogout} color="dark">
         Logout
       </Button>
     </aside>

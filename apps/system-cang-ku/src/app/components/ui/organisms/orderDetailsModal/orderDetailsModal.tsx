@@ -97,7 +97,7 @@ export function OrderDetailsModal() {
             </div>
 
             <Accordion title="Contacto">
-              <div className="text-sm space-y-2">
+              <div className="px-4 text-sm space-y-2">
                 <p className='text-gray-400'>Información</p>
                 <p><span className="font-semibold">Nombre:</span> {orderDetails.customer_name}</p>
                 <p><span className="font-semibold">Email:</span> {orderDetails.customer_email}</p>
@@ -108,7 +108,7 @@ export function OrderDetailsModal() {
               </div>
             </Accordion>
             <Accordion title="Resumen de Productos">
-                <ul className="text-sm space-y-2">
+                <ul className="px-4 text-sm space-y-2">
                     {orderDetails.orderDetails.map(item => (
                         <li key={item.product.sku} className="flex gap-3 items-center">
                             <span>{item.quantity} x</span>

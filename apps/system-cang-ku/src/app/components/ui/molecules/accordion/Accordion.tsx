@@ -8,18 +8,22 @@ interface AccordionProps {
   title: string;
   children: ReactNode;
   startOpen?: boolean;
+  padding?: boolean;
+  className?: string;
 }
 
-export function Accordion({ title, children, startOpen = false }: AccordionProps) {
+export function Accordion({ title, children, className, startOpen = false, padding = true }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(startOpen);
 
   return (
-    <div className="">
+    <div className={clsx( className )}>
       <Button
         variant='ghost'
         color="none"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center px-0 py-3 text-left font-semibold text-gray-800"
+        className={clsx('w-full flex justify-between items-center text-left font-semibold text-gray-800', {
+          'p-2': padding,
+        })}
       >
         {title}
         <Icon
@@ -30,14 +34,7 @@ export function Accordion({ title, children, startOpen = false }: AccordionProps
           })}
         />
       </Button>
-      <div
-        className={clsx('overflow-hidden transition-all duration-300 ease-in-out', {
-          'max-h-screen opacity-100': isOpen,
-          'max-h-0 opacity-0': !isOpen,
-        })}
-      >
-        <div className="pt-1 pb-4 px-1">{children}</div>
-      </div>
+      {isOpen && (children)}
     </div>
   );
 }

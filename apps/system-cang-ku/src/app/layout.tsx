@@ -21,10 +21,9 @@ export default function RootLayout({
         <NotificationProvider>  
           <OrderDetailsModalProvider>
             <LoadingProvider>
-              
-                <GlobalSpinner />
-                <OrderDetailsModal />
-                <NotificationModal />
+              <GlobalSpinner />
+              <OrderDetailsModal />
+              <NotificationModal />
               {children}
             </LoadingProvider>
           </OrderDetailsModalProvider>
