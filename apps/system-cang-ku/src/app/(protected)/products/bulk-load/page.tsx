@@ -12,6 +12,10 @@ import { compressImage } from '@/utils/compressImage';
 import { bulkProductFormReducer, initialBulkState } from './bulkProductFormReducer';
 import { BulkProductRow } from './bulkProductRow'
 
+/**
+ * TODO Implement and fix a solution to send all data in only one petition
+ * Petiton takes more time
+ */
 export const BulkLoad = () => {
   const router = useRouter();
   const [state, dispatch] = useReducer(bulkProductFormReducer, initialBulkState);
@@ -40,91 +44,82 @@ export const BulkLoad = () => {
 
 
   const handleSaveAll = async () => {
-    const validRows = state.filter(row => row.sku && row.name && row.price && row.images && row.stock && (row.categoryIds || row.seasonCode));
-    if (validRows.length === 0) {
-      showNotification({ type: 'error', message: 'No hay productos válidos para guardar.' });
-      return;
-    }
 
-    /**
-     * TODO: Add validation to showloader doesn't exit when users click out of containter
-     */
     showLoader({
       type:'custom',
-      customMessage:  `Guardando ${validRows.length} productos...`,
+      customMessage: 'Procesando carga masiva...'
     });
 
-    const results = { successful: 0, failed: 0, details: [] as any[] };
+    try {
+      const validRows = state.filter(row => row.sku && row.name);
+      if (validRows.length === 0) {
+        showNotification({ type: 'error', message: 'No hay productos válidos para guardar.' });
+        hideLoader();
+        return;
+      }
 
-    for (let i = 0; i < validRows.length; i++) {
-      hideLoader();
-      const row = validRows[i];
-      showLoader({
-        type: 'custom',
-        customMessage: `Guardando producto ${i + 1} de ${validRows.length}: ${row.name}`
-      });
-      
-      try {
-        const formData = new FormData();
-        formData.append('name', row.name);
-        formData.append('description', row.description);
-        formData.append('sku', row.sku);
-        formData.append('stock', String(row.stock));
-        formData.append('price', String(row.price));
-        
-        const allCategoryIds = [...row.categoryIds, row.seasonCode].filter(Boolean);
-        allCategoryIds.forEach(id => formData.append('category_ids', id));
+      const formData = new FormData();
+      const productsAsJson: any[] = [];
 
-        if (row.discountType) {
-          formData.append('discount_type', row.discountType);
-          formData.append('discount_value', String(row.discountValue));
-        }
-
-        const mainImage = row.images.find(img => img.isMain && img.file);
-        if (mainImage) {
-          const compressedMain = await compressImage(mainImage.file as File);
-          formData.append('main_image', compressedMain);
-        }
-        
-        const restImages = row.images.filter(img => !img.isMain && img.file);
-        if (restImages.length > 0) {
-          const compressionPromises = restImages.map(img => compressImage(img.file as File));
-          const compressedRest = await Promise.all(compressionPromises);
-          compressedRest.forEach(file => formData.append('rest_images', file));
-        }
-        
-        // Enviamos una petición por cada producto
-        await apiFetch('/products', {
-          method: 'POST',
-          body: formData,
-          isFormData: true,
-          requiresAuth: true,
+      // Procesar cada fila válida para separar texto de archivos
+      for (const row of validRows) {
+        // 1. Añadir datos de texto al array JSON
+        productsAsJson.push({
+          name: row.name,
+          description: row.description,
+          price: row.price,
+          sku: row.sku,
+          stock: row.stock,
+          category_ids: [...row.categoryIds, row.seasonCode].filter(Boolean),
         });
 
-        results.successful++;
-        results.details.push({ status: 'success', sku: row.sku, name: row.name });
-
-      } catch (err: any) {
-        console.error(`Fallo al guardar el producto con SKU ${row.sku}:`, err);
-        results.failed++;
-        results.details.push({ status: 'error', sku: row.sku, name: row.name, message: err.message });
+        if (row.discountType) {
+        (productsAsJson as any).discount_type = row.discountType;
+        (productsAsJson as any).discount_value = row.discountValue;
       }
-    }
 
-    hideLoader();
+        // 2. Comprimir y añadir archivos de imagen al FormData con el nombre correcto
+        const mainImage = row.images.find(img => img.isMain && img.file);
+        if (mainImage) {
+          const compressedFile = await compressImage(mainImage.file as File);
+          formData.append(`main_image_${row.sku}`, compressedFile);
+        }
 
-    // Notificación final con el resumen
-    showNotification({
-      type: results.failed > 0 ? 'error' : 'success',
-      message: `Carga completada: ${results.successful} exitosos, ${results.failed} fallidos.`,
-    });
+        const restImages = row.images.filter(img => !img.isMain && img.file);
+        const compressionPromises = restImages.map(img => compressImage(img.file as File));
+        const compressedFiles = await Promise.all(compressionPromises);
+        compressedFiles.forEach((file, index) => {
+          formData.append(`rest_images_${row.sku}_${index}`, file);
+        });
+      }
 
-    // Solo redirigir si todo fue exitoso
-    if (results.failed === 0) {
+      // 3. Añadir el array de texto como un string JSON al FormData
+      formData.append('products', JSON.stringify(productsAsJson));
+
+      // 4. Enviar la petición a la API
+      const response = await apiFetch('/products-bulk', {
+        method: 'POST',
+        body: formData,
+        isFormData: true,
+        requiresAuth: true,
+      });
+
+      // 5. Mostrar notificación de resumen
+      showNotification({
+        type: response.summary.failed > 0 ? 'error' : 'success',
+        message: `Carga completada: ${response.summary.successful} exitosos, ${response.summary.failed} fallidos.`,
+      });
+      
+      // Opcional: recargar la página de productos
       router.push('/products');
       router.refresh();
-    }
 
+    } catch (err: any) {
+      console.error('Error en la carga masiva:', err);
+      showNotification({ type: 'error', message: err.message || 'Ocurrió un error inesperado.' });
+    } finally {
+      hideLoader();
+    }
   };
   return (
     <Card className="bg-white">
@@ -165,4 +160,4 @@ export const BulkLoad = () => {
     </Card>
   )
 }
-export default BulkLoad
+export default BulkLoad;
