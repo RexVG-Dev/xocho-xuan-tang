@@ -54,7 +54,7 @@ export function Sidebar() {
       </nav>
 
       <Button onClick={handleLogout} color="dark">
-        Logout
+        Salir
       </Button>
     </aside>
   )

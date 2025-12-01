@@ -123,7 +123,7 @@ export function RecentOrders() {
                 <td className="px-4 py-3">{formatDate(new Date(order.order_date))}</td>
                 <td className="px-4 py-3">
                   <span className={clsx(
-                    'px-2 py-1 text-xs text-white rounded-md capitalize', 
+                    'flex justify-center w-full px-2 py-1 text-xs text-white rounded-md capitalize', 
                     statusInfo[order.status]?.styles || 'bg-gray-100 text-gray-800'
                   )}>
                     {statusInfo[order.status]?.text || order.status}

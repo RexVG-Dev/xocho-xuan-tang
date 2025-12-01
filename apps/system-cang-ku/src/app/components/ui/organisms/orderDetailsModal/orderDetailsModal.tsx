@@ -60,7 +60,7 @@ export function OrderDetailsModal() {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} position="right">
+    <Modal className='h-hull' isOpen={isOpen} onClose={handleClose} position="right">
       {isLoading ? (
         renderSkeleton()
       ) : error ? (

@@ -59,7 +59,7 @@ function Header() {
           </div>
           <span className="text-gray-800 font-medium hidden sm:block">{userInfo.name}</span>
           <Button onClick={handleLogout} color="dark" size="sm">
-            Logout
+            Salir
           </Button>
         </div>
       )}

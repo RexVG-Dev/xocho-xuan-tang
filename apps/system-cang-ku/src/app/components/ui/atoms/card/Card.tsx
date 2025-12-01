@@ -45,9 +45,7 @@ export const Card = forwardRef<HTMLDivElement, CardInterface>( function Card(
           {title}
         </div>
       )}
-      <div>
         {children}
-      </div>
     </div>
   );
 });
