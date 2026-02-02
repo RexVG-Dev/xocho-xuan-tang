@@ -1,4 +1,14 @@
+import { Inter } from 'next/font/google';
+
+import Header from '../app/components/layout/Header';
+import Footer from '../app/components/layout/Footer';
+
+import { InitialDataProvider } from '../contexts/initialData.context';
+import { StoreProvider } from '../contexts/store.context';
+
 import './global.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Welcome to ecommerce-mai-dao',
@@ -12,7 +22,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${inter.className} bg-gray-50 text-gray-900 min-h-screen flex flex-col`}>
+        <InitialDataProvider>
+          <StoreProvider>
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-8">
+              {children}
+            </main>
+            <Footer />
+          </StoreProvider>
+        </InitialDataProvider>
+      </body>
     </html>
   );
 }
