@@ -11,6 +11,7 @@ import { useInitialData } from '@/contexts/useInitialData';
 function Header() {
   const router = useRouter();
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [query, setQuery] = useState('');
   
   // Consumimos los datos de los contextos
   const { cartCount } = useStore();
@@ -27,16 +28,17 @@ function Header() {
 
       <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
         <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
-        <Link href="/novedades" className="hover:text-red-600 transition-colors">Novedades</Link>
-        <Link href="/ofertas" className="hover:text-red-600 transition-colors">Ofertas</Link>
-        <Link href="/mas-vendido" className="hover:text-red-600 transition-colors">Lo + vendido</Link>
+        <Link href="/listing?filter=novedades" className="hover:text-red-600 transition-colors">Novedades</Link>
+        <Link href="/listing?filter=ofertas" className="hover:text-red-600 transition-colors">Ofertas</Link>
+        <Link href="/listing?filter=masvendido" className="hover:text-red-600 transition-colors">Lo + vendido</Link>
       </nav>
 
       <div className="hidden lg:flex flex-1 max-w-xl relative mx-4">
-        <div className="flex w-full bg-gray-100 rounded-md overflow-hidden border border-transparent focus-within:border-gray-300 transition-colors">
-          
+        <form onSubmit={(e) => { e.preventDefault(); router.push(`/listing?query=${encodeURIComponent(query)}`); }} className="flex w-full bg-gray-100 rounded-md overflow-hidden border border-transparent focus-within:border-gray-300 transition-colors">
+
           {/* Dropdown Toggle */}
           <button 
+            type="button"
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             className="bg-red-600 text-white px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-red-700 transition-colors"
           >
@@ -49,11 +51,13 @@ function Header() {
             type="text" 
             placeholder="Buscar productos..." 
             className="flex-1 bg-transparent px-4 text-sm focus:outline-none placeholder-gray-400"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
-          <button className="px-4 text-gray-400 hover:text-red-600 transition-colors">
+          <button className="px-4 text-gray-400 hover:text-red-600 transition-colors" type="submit">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </button>
-        </div>
+        </form>
 
         {/* Menú Desplegable de Categorías Dinámico */}
         {isCategoryOpen && (
@@ -61,10 +65,10 @@ function Header() {
             {isLoadingCategories ? (
                <p className="px-4 py-2 text-sm text-gray-500">Cargando...</p>
             ) : categories.length > 0 ? (
-              categories.map(cat => (
+                categories.map(cat => (
                 <Link 
                   key={cat.id} 
-                  href={`/categoria/${cat.slug}`} 
+                  href={`/listing?category=${encodeURIComponent(cat.slug)}`} 
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600"
                   onClick={() => setIsCategoryOpen(false)}
                 >
