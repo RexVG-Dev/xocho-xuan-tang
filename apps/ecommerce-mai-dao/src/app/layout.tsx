@@ -26,7 +26,7 @@ export default function RootLayout({
         <InitialDataProvider>
           <StoreProvider>
             <Header />
-            <main className="flex-grow container mx-auto px-4 py-8">
+            <main className="flex-grow container mx-auto px-4 py-10 mt-5">
               {children}
             </main>
             <Footer />
