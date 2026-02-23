@@ -1,0 +1,37 @@
+
+.wrapper {
+  :global(.xocho-swiper .swiper-pagination-bullet) {
+    background: #DC2626;
+    opacity: 0.45;
+  }
+
+  :global(.xocho-swiper .swiper-pagination-bullet-active) {
+    opacity: 1;
+  }
+
+  /* Also apply same color rules when pagination is rendered in the external element */
+  :global(.xocho-pagination .swiper-pagination-bullet) {
+    background: #DC2626;
+    opacity: 0.45;
+  }
+
+  :global(.xocho-pagination .swiper-pagination-bullet-active) {
+    opacity: 1;
+  }
+
+  /* Ensure pagination sits below the swiper and is centered */
+  :global(.xocho-pagination) {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    position: relative; /* keep normal flow under swiper */
+    z-index: 10;
+  }
+
+  :global(.xocho-pagination .swiper-pagination-bullet) {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+  }
+}
