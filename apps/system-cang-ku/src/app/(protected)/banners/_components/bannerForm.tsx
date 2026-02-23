@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Accordion, Button, Card, Icon, Input, Toggle } from '@/app/components/ui';
+import { Button, Card, Icon, Input, Toggle } from '@/app/components/ui';
 
 import { apiFetch } from '@/app/api';
 import { useLoading } from '@/app/contexts/useLoading';
@@ -30,6 +30,9 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
   const [position, setPosition] = useState(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [textButton, setTextButton] = useState('');
   
   
   // Estado para las opciones del selector
@@ -70,6 +73,9 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
           setActive(bannerData.active);
           setPosition(bannerData.position);
           setImagePreview(bannerData.image_url);
+          setTitle(bannerData.title || '');
+          setDescription(bannerData.description || '');
+          setTextButton(bannerData.text_button || '');
 
           if (bannerData.target_filters_json) {
             setTargetCategoryCodes(bannerData.target_filters_json.category_codes || []);
@@ -118,6 +124,9 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
     try {
       const formData = new FormData();
       formData.append('name', name);
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('text_button', textButton);
       formData.append('category_id', seasonId);
       formData.append('start_date', startDate);
       formData.append('end_date', endDate);
@@ -168,6 +177,7 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input label="Nombre del Banner" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Input label="Título (opcional)" value={title} onChange={(e) => setTitle(e.target.value)} />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Temporada Asociada</label>
             <select value={seasonId} onChange={(e) => setSeasonId(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
@@ -178,6 +188,7 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
           <Input label="Fecha de Inicio" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
           <Input label="Fecha de Fin" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
           <Input label="Posición (orden)" type="number" value={position} onChange={(e) => setPosition(Number(e.target.value))} required />
+          <Input label="Texto del botón (opcional)" value={textButton} onChange={(e) => setTextButton(e.target.value)} />
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Activo</label>
             <Toggle checked={active} onChange={setActive} />
@@ -186,6 +197,15 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
             <label className="text-sm font-medium text-gray-700">Aplicar a productos con descuento:</label>
             <Toggle checked={hasDiscount} onChange={setHasDiscount} />
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Descripción (opcional)</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md min-h-[100px]"
+            placeholder="Descripción del banner"
+          />
         </div>
          <div className="p-4 pt-2 space-y-4">
             <label className="text-sm font-medium text-gray-700">Limitar a categorías de productos:</label>

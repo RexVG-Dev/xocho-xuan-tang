@@ -1,6 +1,9 @@
 export interface BannerInterface {
   id: number;
   name: string;
+  title?: string;
+  description?: string;
+  text_button?: string;
   image_url: string;
   category_id: string;
   start_date: string;
