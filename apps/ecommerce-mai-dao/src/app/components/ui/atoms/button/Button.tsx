@@ -70,7 +70,7 @@ export function Button({
       ghost: 'bg-transparent text-gray-500 hover:bg-gray-50',
     },
     dark: {
-      solid: 'bg-black text-white hover:bg-gray-900',
+      solid: 'bg-black text-white hover:bg-red-600',
       outline: 'bg-transparent text-black border-2 border-black hover:bg-gray-100',
       ghost: 'bg-transparent text-black hover:bg-gray-100',
     },

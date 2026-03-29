@@ -1,6 +1,7 @@
 import Header from './components/layout/Header';
 import Carousel from './components/ui/organisms/carousel/carousel';
-
+import { ProductCarousel } from './components/sections/productCarousel';
+import CategoryCarousel from './components/sections/categoryCarousel';
 
 /**
  * 
@@ -21,11 +22,11 @@ export default async function Index() {
   const banners = await getBanners();
 
   return (
-    <div className="min-h-screen mt-5 py-6 px-4">
+    <div className="min-h-screen mt-8 pt-8">
       <Header />
 
-      <main className="max-w-6xl mx-auto mt-8">
-        <section className="mt-6">
+      <main className="mx-auto mt-8">
+        <section className="max-w-5xl mx-auto mt-6">
           <div className="rounded-3xl">
             <Carousel variant="banner" showArrows={false} showDots={true} className="h-[420px]" autoplay={true} autoplayDelay={4000}>
               {banners && banners.length > 0 ? (
@@ -46,7 +47,7 @@ export default async function Index() {
                         {b.description ? <p className="text-lg mb-6">{b.description}</p> : null}
                       </div>
                       <div>
-                        <a href="/listing" className="inline-block bg-white text-red-600 px-6 py-3 rounded-full font-semibold">{b.text_button || 'Ver más'}</a>
+                        <a href="/listing" className="inline-block bg-white text-red-600 px-6 py-3 mb-10 rounded-full font-semibold">{b.text_button || 'Ver más'}</a>
                       </div>
                     </div>
                     <div className="w-1/2 h-full flex items-end justify-end">
@@ -93,6 +94,12 @@ export default async function Index() {
             </Carousel>
           </div>
         </section>
+
+        <ProductCarousel title='Novedades' background='grey' />
+        <CategoryCarousel />
+        <ProductCarousel title='Ofertas' background='grey'/>
+
+        <ProductCarousel title='Lo más vendido'/>
       </main>
     </div>
   );

@@ -16,7 +16,9 @@ interface CarouselProps {
   showDots?: boolean;
   className?: string;
   autoplay?: boolean;
+  loop?: boolean;
   autoplayDelay?: number;
+  slidesPerView?: number;
 }
 
 export function Carousel({
@@ -27,8 +29,10 @@ export function Carousel({
   className,
   autoplay = false,
   autoplayDelay = 4000,
+  loop = false,
+  slidesPerView = 1,
 }: CarouselProps) {
-  const slidesPerView = variant === 'banner' ? 1 : 4;
+
   const modules: any[] = React.useMemo(() => {
     const m: any[] = [];
     if (showArrows) m.push(Navigation);
@@ -37,13 +41,13 @@ export function Carousel({
     return m;
   }, [showArrows, showDots, autoplay]);
 
-  const swiperClass = `xocho-swiper ${className ?? ''} rounded-3xl overflow-hidden`.trim();
-
+  const swiperClass = `xocho-swiper ${className ?? ''} rounded-3xl`.trim();
   const containerClass = `${styles.wrapper} ${className ?? ''}`.trim();
 
   return (
     <div className={containerClass}>
       <Swiper
+        loop={loop}
         className={swiperClass}
         modules={modules}
         spaceBetween={variant === 'productList' ? 16 : 0}
