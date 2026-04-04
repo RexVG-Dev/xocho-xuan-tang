@@ -30,13 +30,16 @@ function Header() {
 
       <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
         <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
-        <Link href="/listing?filter=novedades" className="hover:text-red-600 transition-colors">Novedades</Link>
-        <Link href="/listing?filter=ofertas" className="hover:text-red-600 transition-colors">Ofertas</Link>
-        <Link href="/listing?filter=masvendido" className="hover:text-red-600 transition-colors">Lo + vendido</Link>
+        <Link href="/listing?skip=0&take=20" className="hover:text-red-600 transition-colors">Novedades</Link>
+        <Link href="/listing?has_discount=true&skip=0&take=20" className="hover:text-red-600 transition-colors">Ofertas</Link>
+        <Link href="/listing?best-sellers=true&skip=0&take=20" className="hover:text-red-600 transition-colors">Lo + vendido</Link>
       </nav>
 
       <div className="hidden lg:flex flex-1 max-w-xl relative mx-4">
-        <form onSubmit={(e) => { e.preventDefault(); router.push(`/listing?query=${encodeURIComponent(query)}`); }} className="flex w-full bg-gray-100 rounded-md overflow-hidden border border-transparent focus-within:border-gray-300 transition-colors">
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          router.replace(`/listing?searchTerm=${encodeURIComponent(query)}`);
+        }} className="flex w-full bg-gray-100 rounded-md overflow-hidden border border-transparent focus-within:border-gray-300 transition-colors">
 
           <Button
             type="button"

@@ -114,10 +114,10 @@ export default async function Index() {
       <main className="mx-auto mt-8">
         <Banners banners={banners} />
 
-        <ProductCarousel title='Novedades' background='grey' products={newProducts} />
+        <ProductCarousel title='Novedades' background='grey' products={newProducts} seeMoreHref="/listing?skip=0&take=20" />
         <CategoryCarousel />
-        <ProductCarousel title='Ofertas' background='grey' products={offers}/>
-        <ProductCarousel title='Más Vendidos' products={bestSellers}/>
+        <ProductCarousel title='Ofertas' background='grey' products={offers} seeMoreHref="/listing?has_discount=true&skip=0&take=20" />
+        <ProductCarousel title='Más Vendidos' products={bestSellers} seeMoreHref="/listing?best-sellers=true&skip=0&take=20" />
       </main>
     </div>
   );

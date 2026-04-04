@@ -15,6 +15,7 @@ interface ProductCarouselProps {
   title: string;
   background?: 'grey' | 'red' | null;
   products: ListProductsInterface;
+  seeMoreHref?: string;
 }
 
 interface ListProductsInterface {
@@ -24,7 +25,7 @@ interface ListProductsInterface {
   hasMore: boolean;
 }
 
-export function ProductCarousel({ title, background = null, products }: ProductCarouselProps) {
+export function ProductCarousel({ title, background = null, products, seeMoreHref }: ProductCarouselProps) {
   const { addToCart } = useStore();
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -89,9 +90,9 @@ export function ProductCarousel({ title, background = null, products }: ProductC
                 </div>
               </div>
             ))}
-            {products.hasMore && (
+            {products.hasMore && seeMoreHref && (
               <div key="see-more" className="p-4">
-                <Link href="/listing?from_carousel=novedades">
+                <Link href={seeMoreHref}>
                   <div className="rounded-2xl p-4 h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow">
                     <div className="rounded-lg bg-red-700 h-48 flex items-center justify-center overflow-hidden relative border-2 border-dashed border-gray-300">
                       <span className="text-lg font-semibold text-white">Ver más...</span>

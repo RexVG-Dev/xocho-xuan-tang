@@ -17,8 +17,7 @@ export default function ListingPage() {
     return value ?? undefined;
   };
   const [notification, setNotification] = useState<string | null>(null);
-  const filter = getParam('filter');
-  const query = getParam('query');
+  const query = getParam('searchTerm');
   const category = getParam('category');
 
   const products = Array.from({ length: 60 }).map((_, i) => {
@@ -54,7 +53,7 @@ export default function ListingPage() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-4">Listado de productos</h1>
         <p className="text-gray-600 mb-6">
-          Filtro: <strong>{filter ?? '—'}</strong> • Categoría: <strong>{category ?? '—'}</strong> • Búsqueda: <strong>{query ?? '—'}</strong>
+          • Categoría: <strong>{category ?? '—'}</strong> • Búsqueda: <strong>{query ?? '—'}</strong>
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
