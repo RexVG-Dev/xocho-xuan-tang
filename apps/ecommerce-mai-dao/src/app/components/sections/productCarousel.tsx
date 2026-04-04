@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useStore } from '@/contexts/useStore';
+import { ProductInterface } from '@/shared/interfaces';
+
 import Carousel from '../ui/organisms/carousel/carousel';
 import { Button } from '../ui/atoms/button';
 import { Icon } from '../ui/atoms/icon';
-import { useStore } from '@/contexts/useStore';
-import { ProductInterface } from '@/shared/interfaces';
 
 const PRODUCTS: ProductInterface[] = [
   { 

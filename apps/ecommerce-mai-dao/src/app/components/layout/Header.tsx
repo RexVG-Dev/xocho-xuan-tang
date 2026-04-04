@@ -4,9 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { Icon } from "../ui";
 import { useStore } from '@/contexts/useStore';
 import { useInitialData } from '@/contexts/useInitialData';
+
+import { Icon } from "../ui";
+import { Button } from '../ui/atoms/button/Button';
+import { IconButton } from '../ui/atoms/button/IconButton';
 
 function Header() {
   const router = useRouter();
@@ -35,14 +38,16 @@ function Header() {
       <div className="hidden lg:flex flex-1 max-w-xl relative mx-4">
         <form onSubmit={(e) => { e.preventDefault(); router.push(`/listing?query=${encodeURIComponent(query)}`); }} className="flex w-full bg-gray-100 rounded-md overflow-hidden border border-transparent focus-within:border-gray-300 transition-colors">
 
-          <button 
+          <Button
             type="button"
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+            color="primary"
             className="bg-red-600 text-white px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-red-700 transition-colors"
+            icon={<Icon name="down" size={16} />}
+            iconButtonPosition="right"
           >
             Categorías
-            <Icon name="down" size={16} />
-          </button>
+          </Button>
           <input 
             type="text" 
             placeholder="Buscar productos..." 
@@ -50,9 +55,13 @@ function Header() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button className="px-4 text-gray-400 hover:text-red-600 transition-colors" type="submit">
-            <Icon name="search" size={20} />
-          </button>
+          <IconButton
+            className="px-4 text-gray-400 hover:text-red-600 transition-colors"
+            type="submit"
+            icon={<Icon name="search" size={20} />}
+            color="primary"
+            variant="ghost"
+          />
         </form>
 
         {isCategoryOpen && (
@@ -88,9 +97,13 @@ function Header() {
           )}
         </Link>
         
-        <button className="md:hidden p-2 text-gray-700">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-        </button>
+        <IconButton
+          className="md:hidden p-2 text-gray-700"
+          icon={<Icon name="down" size={24} />}
+          color="primary"
+          variant="ghost"
+          aria-label="Abrir menú"
+        />
       </div>
     </header>
   )

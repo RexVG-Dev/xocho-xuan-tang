@@ -1,7 +1,7 @@
+"use client";
 import Carousel from '../ui/organisms/carousel/carousel';
 import Image from 'next/image';
 import { Button } from '../ui/atoms/button';
-import Link from 'next/link';
 
 interface Category {
   name: string;
@@ -57,19 +57,18 @@ export default function CategoryCarousel() {
               <div className="w-1/2">
                 <h2 className="text-white font-bold text-2xl mb-2">{cat.name}</h2>
                 <p className="text-white text-sm mb-4">{cat.description}</p>
-                <Link
-                  href={`/listing?category=${encodeURIComponent(cat.name)}&categoryId=${encodeURIComponent(cat.categoryId)}`}
-                  passHref
+                <Button
+                  color="none"
+                  variant="solid"
+                  rounded="full"
+                  className="bg-white text-red-600 font-semibold text-base px-8 py-3"
+                  onClick={e => {
+                    e.stopPropagation();
+                    window.location.href = `/listing?category=${encodeURIComponent(cat.name)}&categoryId=${encodeURIComponent(cat.categoryId)}`;
+                  }}
                 >
-                  <Button
-                    color="none"
-                    variant="solid"
-                    rounded="full"
-                    className="bg-white text-red-600 font-semibold text-base px-8 py-3"
-                  >
-                    Ver más
-                  </Button>
-                </Link>
+                  Ver más
+                </Button>
               </div>
               <div className="w-1/2 flex justify-end items-end relative">
                 <Image

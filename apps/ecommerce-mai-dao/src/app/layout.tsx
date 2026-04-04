@@ -5,6 +5,7 @@ import Footer from '../app/components/layout/Footer';
 
 import { InitialDataProvider } from '../contexts/initialData.context';
 import { StoreProvider } from '../contexts/store.context';
+import { ApiStateProvider } from '../app/contexts/apiState.context';
 
 import './global.css';
 
@@ -23,15 +24,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gray-50 text-gray-900 min-h-screen flex flex-col`}>
-        <InitialDataProvider>
-          <StoreProvider>
-            <Header />
-            <main className="flex-grow w-full mx-auto">
-              {children}
-            </main>
-            <Footer />
-          </StoreProvider>
-        </InitialDataProvider>
+        <ApiStateProvider>
+          <InitialDataProvider>
+            <StoreProvider>
+              <Header />
+              <main className="flex-grow w-full mx-auto">
+                {children}
+              </main>
+              <Footer />
+            </StoreProvider>
+          </InitialDataProvider>
+        </ApiStateProvider>
       </body>
     </html>
   );
