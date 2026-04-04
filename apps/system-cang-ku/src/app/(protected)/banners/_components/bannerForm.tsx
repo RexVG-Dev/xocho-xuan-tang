@@ -216,8 +216,8 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
                     <input
                       type="checkbox"
                       className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
-                      checked={targetCategoryCodes.includes(cat.id)}
-                      onChange={() => handleTargetCategoryToggle(cat.id)}
+                      checked={targetCategoryCodes.includes(cat.code)}
+                      onChange={() => handleTargetCategoryToggle(cat.code)}
                     />
                     <span className="ml-2 text-sm text-gray-600">{cat.name}</span>
                   </label>
