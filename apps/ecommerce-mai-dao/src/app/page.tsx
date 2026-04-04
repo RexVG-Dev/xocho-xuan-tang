@@ -18,74 +18,94 @@ async function getBanners() {
   }
 }
 
-async function getProducts(): Promise<ProductInterface[]> {
+
+interface ListProductsInterface {
+  products: ProductInterface[];
+  total: number;
+  next: number;
+  hasMore: boolean;
+}
+
+async function getProducts(): Promise<ListProductsInterface> {
   try {
     const res = await apiRequest('/products', { params: { skip: 0, take: 10 } });
     if (res && Array.isArray(res.products)) {
-      return res.products;
+      return {
+        products: res.products,
+        total: res.total ?? res.products.length,
+        next: res.next ?? 0,
+        hasMore: res.hasMore ?? false,
+      };
     }
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   } catch (error) {
     console.error('Error fetching products:', error);
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   }
 }
 
-async function getDiscountProducts(): Promise<ProductInterface[]> {
+
+async function getDiscountProducts(): Promise<ListProductsInterface> {
   try {
     const res = await apiRequest('/products', { params: { hasDiscount: 'true', skip: 0, take: 10 } });
     if (res && Array.isArray(res.products)) {
-      return res.products;
+      return {
+        products: res.products,
+        total: res.total ?? res.products.length,
+        next: res.next ?? 0,
+        hasMore: res.hasMore ?? false,
+      };
     }
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   } catch (error) {
     console.error('Error fetching discount products:', error);
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   }
 }
 
-async function getBestSellers(): Promise<ProductInterface[]> {
+
+async function getBestSellers(): Promise<ListProductsInterface> {
   try {
     const res = await apiRequest('/products/best-sellers', { params: { skip: 0, take: 10 } });
     if (res && Array.isArray(res.products)) {
-      return res.products;
+      return {
+        products: res.products,
+        total: res.total ?? res.products.length,
+        next: res.next ?? 0,
+        hasMore: res.hasMore ?? false,
+      };
     }
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   } catch (error) {
     console.error('Error fetching best sellers:', error);
-    return [];
+    return { products: [], total: 0, next: 0, hasMore: false };
   }
 }
+
 
 export default async function Index() {
   const banners = await getBanners();
 
-  let newProducts: ProductInterface[] = [];
-  let offers: ProductInterface[] = [];
-  let bestSellers: ProductInterface[] = [];
+  let newProducts: ListProductsInterface = { products: [], total: 0, next: 0, hasMore: false };
+  let offers: ListProductsInterface = { products: [], total: 0, next: 0, hasMore: false };
+  let bestSellers: ListProductsInterface = { products: [], total: 0, next: 0, hasMore: false };
 
   try {
     newProducts = await getProducts();
-    if (!Array.isArray(newProducts)) newProducts = [];
   } catch (e) {
     console.error('Error fetching newProducts:', e);
-    newProducts = [];
   }
 
   try {
     offers = await getDiscountProducts();
-    if (!Array.isArray(offers)) offers = [];
   } catch (e) {
     console.error('Error fetching offers:', e);
-    offers = [];
   }
 
   try {
     bestSellers = await getBestSellers();
-    if (!Array.isArray(bestSellers)) bestSellers = [];
   } catch (e) {
     console.error('Error fetching bestSellers:', e);
-    bestSellers = [];
   }
 
   return (

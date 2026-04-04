@@ -14,7 +14,14 @@ import { Icon } from '../ui/atoms/icon';
 interface ProductCarouselProps {
   title: string;
   background?: 'grey' | 'red' | null;
+  products: ListProductsInterface;
+}
+
+interface ListProductsInterface {
   products: ProductInterface[];
+  total: number;
+  next: number;
+  hasMore: boolean;
 }
 
 export function ProductCarousel({ title, background = null, products }: ProductCarouselProps) {
@@ -50,7 +57,7 @@ export function ProductCarousel({ title, background = null, products }: ProductC
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-3xl font-extrabold text-center mb-8">{title}</h2>
           <Carousel variant="productList" slidesPerView={4} showArrows={true} showDots={true} className="py-6">
-            {(products ?? []).map((product) => (
+            {(products?.products ?? []).map((product) => (
               <div key={product.id} className="p-4">
                 <Link href={`/product/${product.id}`}>
                   <div className="rounded-2xl p-4 h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow">
@@ -82,29 +89,17 @@ export function ProductCarousel({ title, background = null, products }: ProductC
                 </div>
               </div>
             ))}
-            <div key="see-more" className="p-4">
-              <Link href="/listing?from_carousel=novedades">
-                <div className="rounded-2xl p-4 h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow">
-                  <div className="rounded-lg bg-red-700 h-48 flex items-center justify-center overflow-hidden relative border-2 border-dashed border-gray-300">
-                    <span className="text-lg font-semibold text-white">Ver más...</span>
+            {products.hasMore && (
+              <div key="see-more" className="p-4">
+                <Link href="/listing?from_carousel=novedades">
+                  <div className="rounded-2xl p-4 h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow">
+                    <div className="rounded-lg bg-red-700 h-48 flex items-center justify-center overflow-hidden relative border-2 border-dashed border-gray-300">
+                      <span className="text-lg font-semibold text-white">Ver más...</span>
+                    </div>
                   </div>
-                  <div className="mt-4 text-xs text-transparent">Cuidado Personal</div>
-                  <div className="min-h-12 mt-2 text-base font-medium text-transparent">Placeholder</div>
-                  <div className="mt-auto flex items-center justify-between pt-4">
-                    <div className="text-2xl font-semibold text-transparent">$0.00</div>
-                  </div>
-                </div>
-              </Link>
-              <div className="mt-2 px-4 invisible">
-                  <Button 
-                    size="xs" 
-                    color="dark" 
-                    className="w-full"
-                  >
-                    Añadir
-                  </Button>
-                </div>
-            </div>
+                </Link>
+              </div>
+            )}
           </Carousel>
         </div>
       </section>
