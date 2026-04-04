@@ -2,23 +2,20 @@
 
 import Link from 'next/link';
 
-import { useInitialData } from '@/contexts/useInitialData';
+import { useCategories } from '../../contexts/category.context';
 
 import { Icon } from "../ui";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const { categories } = useInitialData();
+  const { categories } = useCategories();
 
-  // Mostramos solo las primeras 6 categorías para no saturar el footer
   const footerCategories = categories.slice(0, 6);
 
   return (
     <footer className="bg-red-600 text-white pt-16 pb-8 mt-auto">
       <div className="w-full px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
-          
-          {/* Columna 1 */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-6">
               <Link href="/dashboard" className="flex items-center gap-3 p-1 bg-red-600 rounded-md hover:bg-red-700 transition-colors">
@@ -33,7 +30,7 @@ export function Footer() {
                     {
                       footerCategories.map((cat) => (
                         <li key={cat.id}>
-                          <Link href={`/categoria/${cat.slug}`} className="hover:text-white transition-colors">
+                          <Link href={`/listing?category=${encodeURIComponent(cat.slug)}&categoryId=${encodeURIComponent(cat.id)}`} className="hover:text-white transition-colors">
                             {cat.name}
                           </Link>
                         </li>
@@ -44,8 +41,6 @@ export function Footer() {
               ) : null
             }
           </div>
-
-          {/* Columna 2 */}
           <div className="lg:col-span-2">
             <h4 className="font-bold text-lg mb-4 text-yellow-300">Visita nuestras sucursales</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-red-100">
@@ -91,8 +86,6 @@ export function Footer() {
               </div>
             </div>
           </div>
-
-          {/* Columna 3 */}
           <div className="lg:col-span-1">
              <h4 className="font-bold text-lg mb-4 text-yellow-300">Contacto</h4>
              <div className="space-y-3 text-sm text-red-100 mb-8">

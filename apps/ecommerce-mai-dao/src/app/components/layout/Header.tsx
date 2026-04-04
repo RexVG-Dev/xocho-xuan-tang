@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { useStore } from '@/contexts/useStore';
-import { useInitialData } from '@/contexts/useInitialData';
+import { useCategories } from '../../contexts/category.context';
 
 import { Icon } from "../ui";
 import { Button } from '../ui/atoms/button/Button';
@@ -17,7 +17,7 @@ function Header() {
   const [query, setQuery] = useState('');
   
   const { cartCount } = useStore();
-  const { categories, isLoadingCategories } = useInitialData();
+  const { categories, loading: isLoadingCategories } = useCategories();
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 flex items-center justify-between px-6 py-3 z-50">
