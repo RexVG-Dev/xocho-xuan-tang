@@ -1,3 +1,5 @@
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/long-shang';
+
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export interface ApiRequestOptions {
@@ -12,7 +14,7 @@ export async function apiRequest<T = any>(
   options: ApiRequestOptions = {}
 ): Promise<T> {
   const { method = 'GET', headers = {}, body, params } = options;
-  let fullUrl = url;
+  let fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
   if (params) {
     const query = new URLSearchParams(params as any).toString();
     fullUrl += `?${query}`;

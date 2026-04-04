@@ -2,6 +2,8 @@ import Header from './components/layout/Header';
 import Carousel from './components/ui/organisms/carousel/carousel';
 import { ProductCarousel } from './components/sections/productCarousel';
 import CategoryCarousel from './components/sections/categoryCarousel';
+import { apiRequest } from './contexts/apiClient';
+import { ProductInterface } from '@/shared/interfaces';
 
 /**
  * 
@@ -9,11 +11,48 @@ import CategoryCarousel from './components/sections/categoryCarousel';
  */
 async function getBanners() {
   try {
-    const res = await fetch('http://localhost:3000/long-shang/banners-active', { cache: 'no-store' });
-    if (!res.ok) return [];
-    const data = await res.json();
+    const data = await apiRequest('/banners-active');
     return Array.isArray(data) ? data : [];
-  } catch (err) {
+  } catch {
+    return [];
+  }
+}
+
+async function getProducts(): Promise<ProductInterface[]> {
+  try {
+    const res = await apiRequest('/products', { params: { skip: 0, take: 10 } });
+    if (res && Array.isArray(res.products)) {
+      return res.products;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return [];
+  }
+}
+
+async function getDiscountProducts(): Promise<ProductInterface[]> {
+  try {
+    const res = await apiRequest('/products', { params: { hasDiscount: 'true', skip: 0, take: 10 } });
+    if (res && Array.isArray(res.products)) {
+      return res.products;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching discount products:', error);
+    return [];
+  }
+}
+
+async function getBestSellers(): Promise<ProductInterface[]> {
+  try {
+    const res = await apiRequest('/products/best-sellers', { params: { skip: 0, take: 10 } });
+    if (res && Array.isArray(res.products)) {
+      return res.products;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching best sellers:', error);
     return [];
   }
 }
@@ -21,10 +60,37 @@ async function getBanners() {
 export default async function Index() {
   const banners = await getBanners();
 
+  let newProducts: ProductInterface[] = [];
+  let offers: ProductInterface[] = [];
+  let bestSellers: ProductInterface[] = [];
+
+  try {
+    newProducts = await getProducts();
+    if (!Array.isArray(newProducts)) newProducts = [];
+  } catch (e) {
+    console.error('Error fetching newProducts:', e);
+    newProducts = [];
+  }
+
+  try {
+    offers = await getDiscountProducts();
+    if (!Array.isArray(offers)) offers = [];
+  } catch (e) {
+    console.error('Error fetching offers:', e);
+    offers = [];
+  }
+
+  try {
+    bestSellers = await getBestSellers();
+    if (!Array.isArray(bestSellers)) bestSellers = [];
+  } catch (e) {
+    console.error('Error fetching bestSellers:', e);
+    bestSellers = [];
+  }
+
   return (
     <div className="min-h-screen mt-8 pt-8">
       <Header />
-
       <main className="mx-auto mt-8">
         <section className="max-w-5xl mx-auto mt-6">
           <div className="rounded-3xl">
@@ -56,50 +122,16 @@ export default async function Index() {
                   </div>
                 ))
               ) : (
-                <>
-                  <div className="h-[420px] flex items-center justify-between px-8 bg-gradient-to-r from-red-600 to-red-500 text-white">
-                    <div className="max-w-xl py-12">
-                      <h1 className="text-5xl font-extrabold leading-tight mb-4">El verano está aquí</h1>
-                      <p className="text-lg mb-6">Encuentra lo mejor en cosméticos y productos para el hogar.</p>
-                      <a href="/listing" className="inline-block bg-white text-red-600 px-6 py-3 rounded-full font-semibold">Ver todos los productos</a>
-                    </div>
-                    <div className="w-1/2 h-full flex items-end justify-end">
-                      <div className="w-4/5 h-[320px] bg-[url('https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center rounded-xl shadow-xl" />
-                    </div>
-                  </div>
-
-                  <div className="h-[420px] flex items-center justify-between px-8 bg-gradient-to-r from-pink-600 to-pink-500 text-white">
-                    <div className="max-w-xl py-12">
-                      <h1 className="text-5xl font-extrabold leading-tight mb-4">Ofertas de temporada</h1>
-                      <p className="text-lg mb-6">Aprovecha descuentos exclusivos por tiempo limitado.</p>
-                      <a href="/listing?filter=ofertas" className="inline-block bg-white text-pink-600 px-6 py-3 rounded-full font-semibold">Ver ofertas</a>
-                    </div>
-                    <div className="w-1/2 h-full flex items-end justify-end">
-                      <div className="w-4/5 h-[320px] bg-[url('https://images.unsplash.com/photo-1526178617818-3d8d5b5d2b8b?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center rounded-xl shadow-xl" />
-                    </div>
-                  </div>
-
-                  <div className="h-[420px] flex items-center justify-between px-8 bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-                    <div className="max-w-xl py-12">
-                      <h1 className="text-5xl font-extrabold leading-tight mb-4">Nuevos lanzamientos</h1>
-                      <p className="text-lg mb-6">Descubre las novedades que acaban de llegar.</p>
-                      <a href="/listing?filter=novedades" className="inline-block bg-white text-orange-600 px-6 py-3 rounded-full font-semibold">Ver novedades</a>
-                    </div>
-                    <div className="w-1/2 h-full flex items-end justify-end">
-                      <div className="w-4/5 h-[320px] bg-[url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center rounded-xl shadow-xl" />
-                    </div>
-                  </div>
-                </>
+                <div className="h-[420px] flex items-center justify-center text-white text-2xl font-bold bg-gray-300">No banners available</div>
               )}
             </Carousel>
           </div>
         </section>
 
-        <ProductCarousel title='Novedades' background='grey' />
+        <ProductCarousel title='Novedades' background='grey' products={newProducts} />
         <CategoryCarousel />
-        <ProductCarousel title='Ofertas' background='grey'/>
-
-        <ProductCarousel title='Lo más vendido'/>
+        <ProductCarousel title='Ofertas' background='grey' products={offers}/>
+        <ProductCarousel title='Más Vendidos' products={bestSellers}/>
       </main>
     </div>
   );

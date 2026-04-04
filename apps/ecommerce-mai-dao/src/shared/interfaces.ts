@@ -27,6 +27,7 @@ export interface ProductInterface {
   created_at: string;
   updated_at: string;
   images?: ProductImageInterface[];
+  categories?: CategoryInterface[];
 }
 
 export interface ProductImageInterface {

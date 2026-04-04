@@ -87,10 +87,6 @@ export default function CartPage() {
   const [shippingForm, setShippingForm] = useState<ShippingFormValues>(initialShippingValues);
   const [accepts, setAccepts] = useState<string[]>([]);
 
-  useEffect(() => {
-    console.log([{shippingData}]);
-  }, [shippingData]);
-
   return (
     <div className="py-8 px-4 mt-14 bg-gray-50">
       <div className="max-w-6xl mx-auto">

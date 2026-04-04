@@ -66,7 +66,6 @@ export default function ListingPage() {
               title={product.name}
               price={Number(product.price)}
               onAdd={() => {
-                console.log(`Producto añadido: ${product.name}`);
                 handleAddToCart(product);
               }}
             />

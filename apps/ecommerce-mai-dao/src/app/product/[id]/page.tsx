@@ -6,7 +6,9 @@ import { Button } from '@/app/components/ui';
 import type { DiscountType } from '@/shared/interfaces';
 import { useStore } from '@/contexts/useStore';
 
-const mockProduct = {
+import type { ProductInterface, CategoryType } from '@/shared/interfaces';
+
+const mockProduct: ProductInterface = {
   id: "84a44962-c5b7-4fb6-916e-0361d2c4828f",
   name: "Test bulk name",
   description: "Test bulk descrip",
@@ -20,8 +22,8 @@ const mockProduct = {
   created_at: "2025-10-17T21:08:22.849Z",
   updated_at: "2025-10-17T21:08:22.849Z",
   categories: [
-    { id: "832b118f-d6c3-4dca-91a7-765a39d1a01e", name: "Herramientas", description: null, slug: "herramientas", code: "tools", type: "category" },
-    { id: "97d3a82d-bffa-4eb8-9df2-ef8a3852d7bc", name: "15 de Septiembre", description: null, slug: "15-de-septiembre", code: "mexican-independence-day", type: "season" }
+    { id: "832b118f-d6c3-4dca-91a7-765a39d1a01e", name: "Herramientas", description: undefined, slug: "herramientas", code: "tools", type: 'category' as CategoryType },
+    { id: "97d3a82d-bffa-4eb8-9df2-ef8a3852d7bc", name: "15 de Septiembre", description: undefined, slug: "15-de-septiembre", code: "mexican-independence-day", type: 'season' as CategoryType }
   ],
   images: [
     { id: "50b10bec-d4e1-4f43-b3da-13b422bbb3dd", product_id: "84a44962-c5b7-4fb6-916e-0361d2c4828f", image_url: "https://res.cloudinary.com/dphrt50s2/image/upload/v1760735295/product_images/Test_prod_bulk_30/Test_prod_bulk_30_00.jpg", order: 1 },
@@ -36,7 +38,7 @@ export default function ProductPage() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [notification, setNotification] = useState<string | null>(null);
-  const images = mockProduct.images;
+  const images = mockProduct.images ?? [];
   const router = useRouter();
   const { addToCart } = useStore();
 
@@ -65,28 +67,32 @@ export default function ProductPage() {
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow flex flex-col md:flex-row gap-8 p-6 md:p-10">
         <div className="flex-1 flex flex-col gap-4 items-center">
           <div className="w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center relative overflow-hidden">
-            <img
-              src={images[activeIdx].image_url}
-              alt={mockProduct.name}
-              className="object-contain w-full h-full transition-all duration-300"
-            />
+            {images[activeIdx] && (
+              <img
+                src={images[activeIdx].image_url}
+                alt={mockProduct.name}
+                className="object-contain w-full h-full transition-all duration-300"
+              />
+            )}
             <button
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow hover:bg-white"
-              onClick={() => setActiveIdx((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+              onClick={() => setActiveIdx((prev) => (images.length > 0 ? (prev === 0 ? images.length - 1 : prev - 1) : 0))}
               aria-label="Anterior"
+              disabled={images.length === 0}
             >
               &#8592;
             </button>
             <button
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-1 shadow hover:bg-white"
-              onClick={() => setActiveIdx((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+              onClick={() => setActiveIdx((prev) => (images.length > 0 ? (prev === images.length - 1 ? 0 : prev + 1) : 0))}
               aria-label="Siguiente"
+              disabled={images.length === 0}
             >
               &#8594;
             </button>
           </div>
           <div className="w-full flex gap-2 justify-center">
-            {images.map((img, idx) => (
+            {images.length > 0 && images.map((img, idx) => (
               <button
                 key={img.id}
                 className={`rounded-xl border-2 ${activeIdx === idx ? 'border-red-500' : 'border-transparent'} overflow-hidden w-20 h-20 bg-white`}
@@ -101,7 +107,7 @@ export default function ProductPage() {
 
           <div className="flex-1 flex flex-col justify-start">
             <div className="flex gap-2 mb-2">
-              {mockProduct.categories.map((cat) => (
+              {(mockProduct.categories ?? []).map((cat) => (
                 <span key={cat.id} className="bg-gray-100 rounded-full px-3 py-1 text-xs font-semibold text-gray-600">
                   {cat.name}
                 </span>
