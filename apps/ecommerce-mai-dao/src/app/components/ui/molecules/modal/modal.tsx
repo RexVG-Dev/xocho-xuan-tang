@@ -20,6 +20,7 @@ export interface ModalInterface extends HTMLAttributes<HTMLDivElement> {
   zIndex?: string;
   onClose?: () => void;
   children?: ReactNode;
+  closeButton?: boolean;
 }
 
 export function Modal({
@@ -29,8 +30,8 @@ export function Modal({
   position = positionsModal.center,
   zIndex = 'z-50',
   onClose,
-  children
-
+  children,
+  closeButton = false
 }: ModalInterface) {
    if (!isOpen) {
     return null;
@@ -60,18 +61,30 @@ export function Modal({
         onClick={onClose}
       ></div>
       <div className={modalCardClasses}>
-        <Card
-          className={
-            position === positionsModal.right 
-              ? 'h-full bg-white rounded-l-xl overflow-y-auto'
-              : 'bg-white overflow-y-auto'
-          }
-          title={title}
-          border={border}
-          rounded={position === positionsModal.right ? false : true}
-        >
-          {children}
-        </Card>
+        <div className="relative">
+          {closeButton && (
+            <button
+              aria-label="Cerrar"
+              onClick={onClose}
+              className="absolute top-2 right-2 z-10 text-gray-500 hover:text-black text-2xl font-bold focus:outline-none"
+              style={{ background: 'none', border: 'none', padding: 0, lineHeight: 1 }}
+            >
+              ×
+            </button>
+          )}
+          <Card
+            className={
+              position === positionsModal.right 
+                ? 'h-full bg-white rounded-l-xl overflow-y-auto'
+                : 'bg-white overflow-y-auto'
+            }
+            title={title}
+            border={border}
+            rounded={position === positionsModal.right ? false : true}
+          >
+            {children}
+          </Card>
+        </div>
       </div>
     </div>
   );

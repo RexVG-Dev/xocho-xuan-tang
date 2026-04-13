@@ -1,10 +1,17 @@
+'use client';
 import { useStore } from '@/contexts/useStore';
-import { ReactNode } from 'react';
-import { Button } from '../components/ui/atoms/button/Button';
+import { ReactNode, ButtonHTMLAttributes } from 'react';
+import { Button } from '../components/ui/atoms/button';
 
-export function CartSummary({ onNext, children }: { onNext?: () => void; children?: ReactNode }) {
+type CartSummaryProps = {
+  onNext?: () => void;
+  children?: ReactNode;
+  nextButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
+};
+
+function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
   const { cart, cartTotal } = useStore();
-
+  const isCartEmpty = !cart || cart.length === 0;
   return (
     <div className="bg-white rounded-2xl shadow p-6 w-full max-w-xs">
       <h2 className="text-lg font-bold mb-4">Resumen de orden</h2>
@@ -29,6 +36,8 @@ export function CartSummary({ onNext, children }: { onNext?: () => void; childre
           rounded="full"
           size="md"
           onClick={onNext}
+          disabled={isCartEmpty || nextButtonProps?.disabled}
+          {...nextButtonProps}
         >
           Siguiente
         </Button>
@@ -36,3 +45,5 @@ export function CartSummary({ onNext, children }: { onNext?: () => void; childre
     </div>
   );
 }
+
+export default CartSummary;

@@ -22,10 +22,11 @@ export function ShippingSummary({ values, onEdit }: { values: ShippingFormValues
         )}
       </div>
       <div className="text-gray-700 text-sm">
-        <div>{values.shipping_address.address}</div>
-        <div>
-          {values.shipping_address.city}, {values.shipping_address.country}, C.P. {values.shipping_address.postal_code}
-        </div>
+        <div>{values.shipping_address.street}</div>
+        <div>Col. {values.shipping_address.neighborhood}</div>
+        <div>Municipio: {values.shipping_address.municipality}</div>
+        <div>Estado: {values.shipping_address.state}</div>
+        <div>C.P. {values.shipping_address.postalCode}</div>
         <div>{values.customer_email}</div>
         <div>{values.customer_phone}</div>
       </div>
