@@ -11,14 +11,17 @@ interface StripeCheckoutProps {
   items: { productId: string; quantity: number }[];
   customerEmail: string;
   customerName: string;
+  customerPhone: string;
   shippingAddress: {
     line1: string;
     city: string;
     state: string;
     postal_code: string;
     country: string;
+    instructions?: string;
   };
-  onSuccess?: () => void;
+  shippingInstructions?: string;
+  onSuccess?: (orderData: any) => void;
 }
 
 interface PaymentIntentResponse {
@@ -26,7 +29,7 @@ interface PaymentIntentResponse {
 }
 
 
-function CheckoutForm({ items, customerEmail, customerName, shippingAddress, onSuccess }: StripeCheckoutProps) {
+function CheckoutForm({ items, customerEmail, customerName, customerPhone, shippingAddress, shippingInstructions, onSuccess }: StripeCheckoutProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -41,15 +44,16 @@ function CheckoutForm({ items, customerEmail, customerName, shippingAddress, onS
     // 1. Call API to create PaymentIntent using apiRequest
     let clientSecret = '';
     try {
+      // No enviar instructions a Stripe
+      const { instructions, ...shippingAddressForStripe } = shippingAddress;
       const resp = await apiRequest<PaymentIntentResponse>('/create-payment-intent', {
         method: 'POST',
         headers: {
-          'x-api-key': '+3NeuFJ+aL7RQhEyH2LtP8GhsYcocABXzB7j1fQ8KyE5cDjaop7cq/KlXjZDb0yNHAu6G7IHXD17KjAdQBk8zw=='
+          'x-api-key': process.env.NEXT_PUBLIC_API_KEY_PAYMENT as string,
         },
-        body: { items, customerEmail, customerName, shippingAddress },
+        body: { items, customerEmail, customerName, shippingAddress: shippingAddressForStripe },
       });
       clientSecret = resp.clientSecret;
-      console.log('[StripeCheckout] clientSecret recibido:', clientSecret);
     } catch (err) {
       const msg = (typeof err === 'object' && err && 'message' in err) ? (err as any).message : 'Error al crear el pago';
       setError(msg || 'Error al crear el pago');
@@ -85,8 +89,29 @@ function CheckoutForm({ items, customerEmail, customerName, shippingAddress, onS
     if (result.error) {
       setError(result.error.message || 'Error al procesar el pago');
     } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-      setSuccess(true);
-      if (onSuccess) onSuccess();
+      // Extra step: create order before show success screen
+      try {
+        const orderBody = {
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          shipping_address: `${shippingAddress.line1}, ${shippingAddress.city}, ${shippingAddress.state}, ${shippingAddress.postal_code}, ${shippingAddress.country}`,
+          shipping_instructions: shippingInstructions || shippingAddress.instructions || '',
+          payment_method: 'Stripe',
+          products: items.map(item => ({ productId: item.productId, quantity: item.quantity })),
+        };
+        const orderResp = await apiRequest('/orders', {
+          method: 'POST',
+          headers: {
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY_PAYMENT || ''
+          },
+          body: orderBody,
+        });
+        setSuccess(true);
+        if (onSuccess) onSuccess(orderResp.order);
+      } catch {
+        setError('Pago realizado, pero error al crear la orden.');
+      }
     }
     setLoading(false);
   };

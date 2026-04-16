@@ -78,7 +78,7 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
         const allCategoryIds = [...state.categoryIds, state.seasonCode].filter(Boolean);
         allCategoryIds.forEach(id => formData.append('category_ids', id));
 
-        if (state.discountType) {
+        if (state.discountType && state.discountValue !== '' && state.discountValue !== null) {
           formData.append('discount_type', state.discountType);
           formData.append('discount_value', String(state.discountValue));
         }
@@ -154,18 +154,22 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
           .map(img => img.url);
 
         // 5. Construir el cuerpo JSON final para la petición de producto
-        const productPayload = {
+        const productPayload: Record<string, any> = {
           name: state.name,
           description: state.description,
           sku: state.sku,
           stock: String(state.stock),
           price: String(state.price),
           category_ids: [...state.categoryIds, state.seasonCode].filter(Boolean),
-          discount_type: state.discountType,
-          discount_value: String(state.discountValue),
           main_image_url: mainImageUrl,
           other_image_urls: otherImageUrls,
+          discount_type: null,
+          discount_value: null,
         };
+        if (state.discountType && state.discountValue !== '' && state.discountValue !== null) {
+          productPayload.discount_type = state.discountType;
+          productPayload.discount_value = String(state.discountValue);
+        }
 
         // 6. Enviar la petición PUT con el cuerpo JSON
         await apiFetch(`/products/${productId}`, {
@@ -283,6 +287,17 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
             </div>
             
             <div>
+              <div className="mb-4">
+                  <Input
+                  label="Precio"
+                  type="number"
+                  placeholder="0.00"
+                  value={state.price}
+                  onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'price', value: e.target.value })}
+                />
+              </div>
+              
+
               <label className="block text-sm font-medium text-gray-700 mb-1">Descuento</label>
               <div className="flex items-center gap-4">
                 <label className="flex items-center">
@@ -311,20 +326,12 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
             </div>
 
             <Input
-              label={state.discountType === 'percentage' ? 'Insertar Porcentaje' : 'Insertar Monto'}
+              label={state.discountType === 'percentage' ? 'Descuento por porcentaje' : 'Descuento por monto'}
               type="number"
               placeholder="0.00"
               disabled={!state.discountType}
-              value={state.discountValue}
+              value={state.discountType ? state.discountValue : ''}
               onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'discountValue', value: e.target.value })}
-            />
-
-            <Input
-              label="Precio Unitario"
-              type="number"
-              placeholder="0.00"
-              value={state.price}
-              onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'price', value: e.target.value })}
             />
           </div>
         </div>

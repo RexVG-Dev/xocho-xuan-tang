@@ -125,6 +125,9 @@ export function ImageUploader({ images, dispatch }: ImageUploaderProps) {
           </div>
         ))}
       </div>
+      <div className='text-sm text-gray-500 mt-4'>
+        <span>Puedes seleccionar tu imagen principal dando click en ella * </span>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { CartStepper } from './CartStepper';
 import { CartTable } from './CartTable';
@@ -10,85 +10,26 @@ import { OrderSuccess } from './OrderSuccess';
 import { OrderSummary } from './OrderSummary';
 import { Button } from '../components/ui/atoms/button/Button';
 import StripeCheckout from './StripeCheckout';
+import { useStore } from '@/contexts/useStore';
 
-const mockOrderResponse = {
-  id: '4a33a76e-2dd6-4b45-80c9-d4b117ebfef6',
-  order_date: '2026-03-31T19:34:37.174Z',
-  total: '623.4',
-  status: 'packing',
-  shipping_address: 'Av. Siempreviva 742, Springfield',
-  payment_method: 'Stripe',
-  tracking_number: 'JIBQ-90795',
-  customer_email: 'ana.lopez@example.com',
-  customer_name: 'Ana Lopez',
-  customer_phone: '5543452343',
-  orderDetails: [
-    {
-      id: '2423487b-99d1-4583-9a96-8631f4dd31b5',
-      order_id: '4a33a76e-2dd6-4b45-80c9-d4b117ebfef6',
-      product_id: '4680ee70-6443-4aeb-99dc-a70627aa5bdd',
-      quantity: 2,
-      unit_price: '100',
-      product: {
-        id: '4680ee70-6443-4aeb-99dc-a70627aa5bdd',
-        name: 'Nuevo Nombre',
-        description: 'SARTEN de teflón,',
-        price: '100',
-        sku: 'SARTEN-002',
-        stock: 20,
-        main_image_url: 'https://res.cloudinary.com/dphrt50s2/image/upload/v1760319490/product_images/SARTEN-002/SARTEN-002_1760319488792.jpg',
-        discount_value: '0',
-        discount_type: 'amount',
-        active: true,
-        created_at: '2025-06-09T01:16:04.866Z',
-        updated_at: '2026-03-31T19:34:37.190Z',
-      },
-    },
-    {
-      id: 'c7e9f004-4134-4ba3-a108-339ba6043f06',
-      order_id: '4a33a76e-2dd6-4b45-80c9-d4b117ebfef6',
-      product_id: 'a22e9b64-34e7-4d41-a5cb-bf0eb030440f',
-      quantity: 1,
-      unit_price: '423.4',
-      product: {
-        id: 'a22e9b64-34e7-4d41-a5cb-bf0eb030440f',
-        name: 'Bocina JBL 2',
-        description: 'Bocina para escuchar tu música en donde quieras, cuenta con una capacidad de 8 horas libres',
-        price: '423.4',
-        sku: 'BOCINA-003',
-        stock: 16,
-        main_image_url: 'https://res.cloudinary.com/dphrt50s2/image/upload/v1760240952/product_images/BOCINA-001/BOCINA-001_01.jpg',
-        discount_value: '0.1',
-        discount_type: 'percentage',
-        active: true,
-        created_at: '2025-06-09T01:14:22.983Z',
-        updated_at: '2026-03-31T19:34:37.199Z',
-      },
-    },
-  ],
-  orderStatusHistory: [
-    {
-      id: 49,
-      order_id: '4a33a76e-2dd6-4b45-80c9-d4b117ebfef6',
-      status: 'packing',
-      change_date: '2026-03-31T19:34:37.200Z',
-      user_id: 'f94f057a-6ebf-48df-a0e2-7902ba491903',
-      observations: 'Orden creada y procesando.',
-    },
-  ],
-};
 import { CartTableConfirm } from './CartTableConfirm';
 import { ShippingSummary } from './ShippingSummary';
 import { ConfirmRadios } from './ConfirmRadios';
-
 
 function CartPage() {
   const [step, setStep] = useState(0);
   const [shippingData, setShippingData] = useState<ShippingFormValues | null>(null);
   const [shippingForm, setShippingForm] = useState<ShippingFormValues>(initialShippingValues);
   const [shippingErrors, setShippingErrors] = useState({});
-
   const [accepts, setAccepts] = useState<string[]>([]);
+  const { cart, clearCart } = useStore();
+  const [orderResponse, setOrderResponse] = useState<any>(null);
+
+  useEffect(() => {
+    if (step === 4 && cart.length > 0) {
+      clearCart();
+    }
+  }, [step]);
 
   return (
     <div className="py-8 px-4 mt-14 bg-gray-50">
@@ -182,46 +123,52 @@ function CartPage() {
               <h2 className="text-2xl font-bold mb-8 text-center">Completa tu pago</h2>
               {shippingData && (
                 <StripeCheckout
-                  items={mockOrderResponse.orderDetails.map(item => ({
-                    productId: item.product_id,
+                  items={cart.map(item => ({
+                    productId: item.id,
                     quantity: item.quantity
                   }))}
                   customerEmail={shippingData.customer_email}
                   customerName={shippingData.customer_name + (shippingData.customer_last_name ? ' ' + shippingData.customer_last_name : '')}
+                  customerPhone={shippingData.customer_phone}
                   shippingAddress={{
                     line1: shippingData.shipping_address.street,
                     city: shippingData.shipping_address.municipality,
                     state: shippingData.shipping_address.state,
                     postal_code: shippingData.shipping_address.postalCode,
-                    country: 'MX'
+                    country: 'MX',
+                    instructions: shippingData.shipping_address.instructions || ''
                   }}
-                  onSuccess={() => setStep(step + 1)}
+                  shippingInstructions={shippingData.shipping_address.instructions || ''}
+                  onSuccess={(orderData) => {
+                    setOrderResponse(orderData);
+                    setStep(step + 1);
+                  }}
                 />
               )}
             </div>
           </div>
         )}
-        {step === 4 && (
+        {step === 4 && orderResponse && (
           <OrderSuccess
-            trackingNumber={mockOrderResponse.tracking_number}
+            trackingNumber={orderResponse.tracking_number}
             shippingData={{
-              customer_name: mockOrderResponse.customer_name,
+              customer_name: orderResponse.customer_name,
               customer_last_name: '',
-              customer_email: mockOrderResponse.customer_email,
-              customer_phone: mockOrderResponse.customer_phone,
-              shipping_address: mockOrderResponse.shipping_address,
+              customer_email: orderResponse.customer_email,
+              customer_phone: orderResponse.customer_phone,
+              shipping_address: orderResponse.shipping_address,
             }}
             summary={
               <OrderSummary
-                total={parseFloat(mockOrderResponse.total)}
-                orderDetails={mockOrderResponse.orderDetails}
+                total={parseFloat(orderResponse.total)}
+                orderDetails={orderResponse.orderDetails}
               />
             }
+            showExploreMoreButton
           />
         )}
       </div>
     </div>
   );
 }
-
 export default CartPage;

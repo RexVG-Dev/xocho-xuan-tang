@@ -32,7 +32,7 @@ export function CartStepper({ currentStep = 0, onBack }: { currentStep: number; 
             </React.Fragment>
           ))}
         </div>
-        {onBack && (
+        {onBack && currentStep < steps.length - 1 && (
           <Button
             className="ml-8 flex items-center gap-1 text-gray-600 hover:text-black text-sm font-semibold"
             color="light"
