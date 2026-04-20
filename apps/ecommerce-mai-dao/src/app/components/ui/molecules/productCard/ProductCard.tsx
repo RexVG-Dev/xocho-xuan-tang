@@ -8,11 +8,12 @@ export interface ProductCardProps {
   image: string;
   title: string;
   price: number;
+  discount?: string;
   onAdd: () => void;
 }
 
 
-export const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, price, onAdd }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, price, discount, onAdd }) => {
   const router = useRouter();
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) return;
@@ -24,6 +25,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, pric
       className="bg-white rounded-2xl shadow-md flex flex-col p-4 h-full transition hover:shadow-lg cursor-pointer"
       onClick={handleCardClick}
     >
+      {discount && (
+        <span className="absolute bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">% Oferta</span>
+      )}
       <div className="w-full aspect-square flex items-center justify-center mb-4 overflow-hidden rounded-xl bg-white border border-gray-100">
         <img src={image} alt={title} className="object-contain w-full h-full" />
       </div>

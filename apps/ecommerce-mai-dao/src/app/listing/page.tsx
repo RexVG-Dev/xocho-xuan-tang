@@ -4,7 +4,9 @@ import { useCallback, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { ProductInterface } from '@/shared/interfaces';
+import { calculateDiscountedPrice} from '@/shared/utils';
 import { useStore } from '@/contexts/useStore';
+
 import { ProductCard } from '../components/ui/molecules/productCard/ProductCard';
 import { useListingProducts } from './useListingProducts';
 
@@ -45,7 +47,7 @@ export default function ListingPage() {
     };
 
   return (
-    <div className="min-h-screen py-8 px-4 bg-gray-50">
+    <div className="min-h-screen py-8 px-4 mt-12 bg-gray-50">
       {notification && (
         <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
           {notification}
@@ -70,7 +72,8 @@ export default function ListingPage() {
                   id={product.id}
                   image={product.main_image_url || (product.images?.[0]?.image_url) || '/assets/categories/sample.png'}
                   title={product.name}
-                  price={Number(product.price)}
+                  price={Number(calculateDiscountedPrice(product))}
+                  discount={product.discount_type}
                   onAdd={() => {
                     handleAddToCart(product);
                   }}

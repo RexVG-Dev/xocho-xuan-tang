@@ -69,9 +69,9 @@ export function ProductCarousel({ title, background = null, products, seeMoreHre
                     <div className="rounded-lg bg-white h-48 flex items-center justify-center overflow-hidden relative">
                       <Image 
                         src={product.main_image_url} 
-                        alt={product.name} 
+                        alt={product.name}
                         fill
-                        className="object-contain" 
+                        className="object-cover" 
                       />
                     </div>
                     <div className="mt-4 text-xs text-gray-400">{product.categories?.[0]?.name || 'Sin categoría'}</div>
