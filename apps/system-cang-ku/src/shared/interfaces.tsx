@@ -21,7 +21,7 @@ export interface ProductInterface {
   stock: number;
   main_image_url: string;
   discount_value?: string;
-  discount_type?: KindDiscount;
+  discount_type?: KindDiscount | null;
   active: boolean;
   created_at: string;
   updated_at: string;

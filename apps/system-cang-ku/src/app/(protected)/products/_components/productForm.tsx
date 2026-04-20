@@ -8,9 +8,11 @@ import { useNotification } from '@/app/contexts/useNotification';
 import { apiFetch } from '@/app/api';
 import { Button, Card, Icon, Input } from '@/app/components/ui';
 import { CategoryInterface } from '@/shared/types/category';
+import { Product } from '@/shared/interfaces';
+import { compressImage } from '@/utils/compressImage';
+
 import { productFormReducer, initialState } from './productFormReducer';
 import { ImageUploader } from './imageUploader';
-import { compressImage } from '@/utils/compressImage';
 
 
 interface ProductFormProps {
@@ -29,7 +31,7 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
   useEffect(() => {
     async function fetchFilterData() {
       try {
-        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: true });
+        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: true }) as CategoryInterface[];
         setCategories(allCategories.filter(c => c.type === 'category'));
         setSeasons(allCategories.filter(c => c.type === 'season'));
       } catch (err) {
@@ -44,7 +46,10 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
       if (mode === 'edit' && productId) {
         showLoader({type: 'get'});
         try {
-          const productData = await apiFetch(`/products/${productId}`, { requiresAuth: true });
+          const productData = await apiFetch(`/products/${productId}`, { requiresAuth: true }) as Product;
+          if (productData.discount_type === 'percentage' && productData.discount_value !== null) {
+            productData.discount_value = productData.discount_value * 100;
+          }
           dispatch({ type: 'LOAD_PRODUCT', product: productData });
         } catch (err) {
           console.error("Fallo al cargar el producto", err);
@@ -61,9 +66,31 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, productId]);
 
+  const validateDiscountValue = () => {
+    const discountValue = parseFloat(String(state.discountValue));
+    if (state.discountType === 'percentage') {
+      return discountValue >= 0 && discountValue <= 100;
+    }
+    if (state.discountType === 'amount') {
+      return discountValue < parseFloat(String(state.price));
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    showLoader({type: 'changes'});
+
+    if (!validateDiscountValue()) {
+      showNotification({
+        type: 'error',
+        message: state.discountType === 'percentage' 
+          ? 'El descuento por porcentaje debe estar entre 0 y 100.' 
+          : 'El descuento por monto debe ser menor que el precio.',
+      });
+      return;
+    }
+
+    showLoader({ type: 'changes' });
 
     try {
       if ( mode === 'create' ) {
@@ -79,8 +106,13 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
         allCategoryIds.forEach(id => formData.append('category_ids', id));
 
         if (state.discountType && state.discountValue !== '' && state.discountValue !== null) {
-          formData.append('discount_type', state.discountType);
-          formData.append('discount_value', String(state.discountValue));
+          if (state.discountType === 'percentage') {
+            formData.append('discount_type', state.discountType);
+            formData.append('discount_value', String(parseFloat(String(state.discountValue)) / 100));
+          } else {
+            formData.append('discount_type', state.discountType);
+            formData.append('discount_value', String(state.discountValue));
+          }
         }
 
          const mainImage = state.images.find(img => img.isMain && img.file);
@@ -133,7 +165,7 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
             body: imageFormData,
             isFormData: true,
             requiresAuth: true,
-          });
+          }) as { urls: string[] };
           uploadedUrls = uploadResponse.urls;
         }
 
@@ -154,21 +186,27 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
           .map(img => img.url);
 
         // 5. Construir el cuerpo JSON final para la petición de producto
-        const productPayload: Record<string, any> = {
+        const productPayload: Partial<Product> = {
           name: state.name,
           description: state.description,
           sku: state.sku,
-          stock: String(state.stock),
-          price: String(state.price),
+          stock: Number(state.stock),
+          price: Number(state.price),
           category_ids: [...state.categoryIds, state.seasonCode].filter(Boolean),
           main_image_url: mainImageUrl,
           other_image_urls: otherImageUrls,
-          discount_type: null,
-          discount_value: null,
+          discount_type: state.discountType,
+          discount_value: state.discountType === 'percentage'
+            ? parseFloat(String(state.discountValue)) / 100
+            : state.discountValue !== null && state.discountValue !== ''
+            ? parseFloat(String(state.discountValue))
+            : null,
         };
         if (state.discountType && state.discountValue !== '' && state.discountValue !== null) {
           productPayload.discount_type = state.discountType;
-          productPayload.discount_value = String(state.discountValue);
+          productPayload.discount_value = state.discountType === 'percentage'
+            ? parseFloat(String(state.discountValue)) / 100
+            : parseFloat(String(state.discountValue));
         }
 
         // 6. Enviar la petición PUT con el cuerpo JSON
@@ -186,9 +224,9 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
 
         router.push('/products');
         router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Fallo al ${mode === 'create' ? 'crear' : 'actualizar'} el producto:`, err);
-      showNotification({ type: 'error', message: err.message || 'Ocurrió un error.' });
+      showNotification({ type: 'error', message: (err as Error).message || 'Ocurrió un error.' });
     } finally {
       hideLoader();
     }
@@ -325,14 +363,16 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
               </div>
             </div>
 
-            <Input
-              label={state.discountType === 'percentage' ? 'Descuento por porcentaje' : 'Descuento por monto'}
-              type="number"
-              placeholder="0.00"
-              disabled={!state.discountType}
-              value={state.discountType ? state.discountValue : ''}
-              onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'discountValue', value: e.target.value })}
-            />
+            {state.discountType && (
+              <Input
+                label={state.discountType === 'percentage' ? 'Descuento por porcentaje' : 'Descuento por monto'}
+                type="number"
+                placeholder={state.discountType === 'percentage' ? '0-100 %' : '0.00'}
+                value={state.discountValue}
+                onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'discountValue', value: e.target.value })}
+              />
+            )}
+            
           </div>
         </div>
 
