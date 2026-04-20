@@ -1,6 +1,8 @@
 'use client';
-import { useStore } from '@/contexts/useStore';
 import { ReactNode, ButtonHTMLAttributes } from 'react';
+
+import { useStore } from '@/contexts/useStore';
+
 import { Button } from '../components/ui/atoms/button';
 
 type CartSummaryProps = {
@@ -12,12 +14,31 @@ type CartSummaryProps = {
 function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
   const { cart, cartTotal } = useStore();
   const isCartEmpty = !cart || cart.length === 0;
+
+  const calculateSubtotal = () => {
+    return cart.reduce((subtotal, item) => {
+      const price = Number(item.price);
+      const discountValue = Number(item.discount_value);
+
+      let discountedPrice = price;
+      if (item.discount_type === 'percentage') {
+        discountedPrice = price * (1 - discountValue);
+      } else if (item.discount_type === 'amount') {
+        discountedPrice = price - discountValue;
+      }
+
+      return subtotal + discountedPrice * item.quantity;
+    }, 0);
+  };
+
+  const subtotal = calculateSubtotal();
+
   return (
     <div className="bg-white rounded-2xl shadow p-6 w-full max-w-xs">
       <h2 className="text-lg font-bold mb-4">Resumen de orden</h2>
       <div className="flex justify-between text-gray-600 mb-2">
         <span>Sub Total</span>
-        <span>${cartTotal.toFixed(2)}</span>
+        <span>${subtotal.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-gray-600 mb-2">
         <span>Envío</span>
@@ -26,7 +47,7 @@ function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
       <div className="border-t my-2"></div>
       <div className="flex justify-between text-lg font-bold mb-4">
         <span>Total</span>
-        <span>${cartTotal.toFixed(2)}</span>
+        <span>${subtotal.toFixed(2)}</span>
       </div>
       {children}
       {onNext && (

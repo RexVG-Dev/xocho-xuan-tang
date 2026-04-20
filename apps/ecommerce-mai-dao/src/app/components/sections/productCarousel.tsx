@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useStore } from '@/contexts/useStore';
+import { calculateDiscountedPrice } from '@/shared/utils';
 import { ProductInterface } from '@/shared/interfaces';
 
 import Carousel from '../ui/organisms/carousel/carousel';
@@ -62,6 +63,9 @@ export function ProductCarousel({ title, background = null, products, seeMoreHre
               <div key={product.id} className="p-4">
                 <Link href={`/product/${product.id}`}>
                   <div className="rounded-2xl p-4 h-full flex flex-col cursor-pointer hover:shadow-lg transition-shadow">
+                    {product.discount_value && product.discount_value !== '0' && (
+                      <span className="absolute top-8 left-8 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">% Oferta</span>
+                    )}
                     <div className="rounded-lg bg-white h-48 flex items-center justify-center overflow-hidden relative">
                       <Image 
                         src={product.main_image_url} 
@@ -73,7 +77,11 @@ export function ProductCarousel({ title, background = null, products, seeMoreHre
                     <div className="mt-4 text-xs text-gray-400">{product.categories?.[0]?.name || 'Sin categoría'}</div>
                     <div className="min-h-12 mt-2 text-base font-medium text-gray-900">{product.name}</div>
                     <div className="mt-auto flex items-center justify-between pt-4">
-                      <div className="text-2xl font-semibold">${parseFloat(product.price).toFixed(2)}</div>
+                      {product.discount_value && product.discount_value !== '0' && (
+                        <div className="text-md font-semibold line-through text-gray-400">${parseFloat(product.price).toFixed(2)}</div>
+                      )}
+                      <div className="text-2xl font-semibold">${calculateDiscountedPrice(product)}</div>
+                      
                     </div>
                   </div>
                 </Link>

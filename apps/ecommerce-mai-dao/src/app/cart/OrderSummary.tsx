@@ -1,18 +1,20 @@
 import React from 'react';
 
+import { calculateDiscountedPrice } from '@/shared/utils';
+import { ProductInterface } from '@/shared/interfaces';
+
 interface OrderSummaryProps {
   total: number;
   orderDetails: Array<{
     id: string;
     quantity: number;
     unit_price: string;
-    product: {
-      name: string;
-    };
+    product: ProductInterface;
   }>;
 }
 
 export const OrderSummary: React.FC<OrderSummaryProps> = ({ total, orderDetails }) => {
+
   return (
     <div className="bg-white rounded-2xl shadow p-6 w-full max-w-xs">
       <h2 className="text-lg font-bold mb-4">Resumen de orden</h2>
@@ -20,7 +22,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({ total, orderDetails 
         {orderDetails.map((item) => (
           <div key={item.id} className="flex justify-between text-gray-600">
             <span>{item.quantity} x {item.product.name}</span>
-            <span>${parseFloat(item.unit_price).toFixed(2)}</span>
+            <span>${(Number(calculateDiscountedPrice(item.product)) * item.quantity).toFixed(2)}</span>
           </div>
         ))}
       </div>

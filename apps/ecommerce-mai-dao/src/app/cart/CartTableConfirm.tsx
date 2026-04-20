@@ -1,5 +1,8 @@
-import { useStore } from '@/contexts/useStore';
 import Image from 'next/image';
+
+import { useStore } from '@/contexts/useStore';
+import { calculateDiscountedPrice } from '@/shared/utils';
+
 import { Button } from '../components/ui/atoms/button/Button';
 
 export function CartTableConfirm() {
@@ -59,7 +62,7 @@ export function CartTableConfirm() {
                 </div>
               </td>
               <td className="py-4 px-4 text-right font-semibold text-gray-900">
-                ${Number(item.price).toFixed(2)}
+                {calculateDiscountedPrice(item)}
               </td>
             </tr>
           ))}

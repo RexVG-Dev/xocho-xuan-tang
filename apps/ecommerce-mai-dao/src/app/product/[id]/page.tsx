@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 
 import { Button } from '@/app/components/ui';
 import { useStore } from '@/contexts/useStore';
+import { calculateDiscountedPrice } from '@/shared/utils';
 
 import type { ProductInterface } from '@/shared/interfaces';
 import { apiRequest } from '../../contexts/apiClient';
@@ -124,10 +125,10 @@ export default function ProductPage() {
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <div className="text-gray-400 text-xs mb-2">SKU #{product.sku}</div>
             <div className="flex items-center gap-4 mb-2">
-              <span className="text-2xl font-bold text-gray-900">${Number(product.price).toFixed(2)}</span>
+              <span className="text-2xl font-bold text-gray-900">${calculateDiscountedPrice(product)}</span>
               {product.discount_value && product.discount_value !== '0' && (
                 <span className="text-xl font-semibold text-gray-400 line-through">
-                  ${Number(Number(product.price) + Number(product.discount_value)).toFixed(2)}
+                  ${Number(product.price).toFixed(2)}
                 </span>
               )}
               {product.discount_value && product.discount_value !== '0' && (
