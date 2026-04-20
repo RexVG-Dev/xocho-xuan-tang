@@ -33,6 +33,7 @@ function Header() {
         <Link href="/listing?skip=0&take=20" className="hover:text-red-600 transition-colors">Novedades</Link>
         <Link href="/listing?has_discount=true&skip=0&take=20" className="hover:text-red-600 transition-colors">Ofertas</Link>
         <Link href="/listing?best-sellers=true&skip=0&take=20" className="hover:text-red-600 transition-colors">Lo + vendido</Link>
+        <Link href="/tracking" className="hover:text-red-600 transition-colors">Seguir Pedido</Link>
       </nav>
 
       <div className="hidden lg:flex flex-1 max-w-xl relative mx-4">
