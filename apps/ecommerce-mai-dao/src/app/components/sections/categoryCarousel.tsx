@@ -12,10 +12,10 @@ interface Category {
 
 const categories: Category[] = [
   {
-    name: 'Accesorios',
-    description: 'Entra a nuestra sección de Accesorios y encuentra todo que necesitas.',
+    name: 'Electrónica',
+    description: 'Entra a nuestra sección de electrónica y encuentra todo que necesitas.',
     image: '/assets/categories/technology.png',
-    categoryId: '52f9bf22-0316-407f-9be7-27dd2966d4cc'
+    categoryId: '8ddbd2d1-7c35-49c7-83b1-6d27df0f3a15'
   },
   {
     name: 'Cocina',
