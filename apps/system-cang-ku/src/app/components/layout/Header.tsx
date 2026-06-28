@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { formatDate } from '@/utils/dates';
-import { Icon, Button } from "../ui";
+import { Button } from "../ui";
 
 interface UserInfo {
   name: string;
@@ -45,10 +45,14 @@ function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 flex items-center justify-between px-6 py-3 z-10">
       <div className="flex items-center gap-4">
-        <Link href="/dashboard" className="flex items-center gap-3 p-1 bg-red-600 rounded-md hover:bg-red-700 transition-colors">
-          <Icon name='logo_white' size={42} />
+        <Link href="/dashboard" className="flex items-center gap-3 p-1 rounded-md">
+          <img
+            src="/assets/images/logo-xocho.jpeg"
+            alt="Xocho logo"
+            className="h-10 w-10 object-contain rounded-md"
+          />
         </Link>
-        <span className="text-lg font-semibold text-gray-700">Welcome</span>
+        <span className="text-lg font-semibold text-gray-700">Bienvenido</span>
       </div>
 
       {userInfo && (

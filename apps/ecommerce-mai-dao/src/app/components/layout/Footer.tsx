@@ -4,8 +4,6 @@ import Link from 'next/link';
 
 import { useCategories } from '../../contexts/category.context';
 
-import { Icon } from "../ui";
-
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { categories } = useCategories();
@@ -18,8 +16,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-6">
-              <Link href="/dashboard" className="flex items-center gap-3 p-1 bg-red-600 rounded-md hover:bg-red-700 transition-colors">
-                <Icon name='logo_white' size={42} />
+              <Link href="/" className="flex items-center gap-3 p-1 bg-red-600 rounded-md">
+                <img
+                  src="/assets/images/logo-xocho.jpeg"
+                  alt="Xocho"
+                  width={50}
+                  height={50}
+                  className="object-contain rounded-full"
+                />
               </Link>
               <span className="text-lg text-neutral-100 font-semibold text-gray-700">Xocho</span>
             </div>

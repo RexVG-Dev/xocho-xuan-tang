@@ -99,6 +99,7 @@ function CheckoutForm({ items, customerEmail, customerName, customerPhone, shipp
           shipping_instructions: shippingInstructions || shippingAddress.instructions || '',
           payment_method: 'Stripe',
           products: items.map(item => ({ productId: item.productId, quantity: item.quantity })),
+          payment_intent_id: result.paymentIntent.id,
         };
         const orderResp = await apiRequest('/orders', {
           method: 'POST',

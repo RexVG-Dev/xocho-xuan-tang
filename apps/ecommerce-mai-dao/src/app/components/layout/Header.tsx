@@ -22,8 +22,14 @@ function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 flex items-center justify-between px-6 py-3 z-50">
       <div className="flex items-center gap-4">
-        <Link href="/" className="flex items-center gap-3 p-1 bg-red-600 rounded-md hover:bg-red-700 transition-colors">
-          <Icon name='logo_white' size={42} />
+        <Link href="/" className="flex items-center gap-3 p-1 rounded-md">
+          <img
+            src="/assets/images/logo-xocho.jpeg"
+            alt="Xocho"
+            width={50}
+            height={50}
+            className="object-contain rounded-full"
+          />
         </Link>
         <span className="text-lg text-red-600 font-semibold">Xocho</span>
       </div>

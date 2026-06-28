@@ -57,12 +57,7 @@ export const BulkLoad = () => {
     const results = { successful: 0, failed: 0, details: [] as any[] };
 
     for (let i = 0; i < validRows.length; i++) {
-      hideLoader();
       const row = validRows[i];
-      showLoader({
-        type: 'custom',
-        customMessage: `Guardando producto ${i + 1} de ${validRows.length}: ${row.name}`
-      });
       
       try {
         const formData = new FormData();
