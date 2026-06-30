@@ -109,7 +109,7 @@ function CartPage() {
                   className="w-full bg-black text-white rounded-full py-3 font-semibold text-base transition hover:bg-gray-900 mt-2"
                   onClick={() => setStep(step + 1)}
                   color="dark"
-                  disabled={accepts.length !== 3}
+                  disabled={accepts.length !== 2}
                 >
                   Proceder al pago
                 </Button>

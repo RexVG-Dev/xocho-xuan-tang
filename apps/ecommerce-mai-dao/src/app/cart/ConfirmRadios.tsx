@@ -6,7 +6,6 @@ import remarkGfm from 'remark-gfm';
 const options = [
   { label: 'Acepto aviso de privacidad', value: 'privacy', file: '/content/privacy.md' },
   { label: 'Acepto términos y condiciones', value: 'terms', file: '/content/termsAndConditions.md' },
-  { label: 'Acepto políticas de envío', value: 'shipping', file: '/content/shippingPolicy.md' },
 ];
 
 export function ConfirmRadios({ value, onChange }: { value: string[]; onChange: (val: string[]) => void }) {

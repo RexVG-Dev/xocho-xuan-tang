@@ -1,5 +1,4 @@
 import { ChangeEvent, useReducer } from 'react';
-import { apiRequest } from '../contexts/apiClient';
 
 export function isShippingFormValid(values: ShippingFormValues, errors: ShippingFormErrors): boolean {
   if (
@@ -143,11 +142,6 @@ function reducer(state: { values: ShippingFormValues; errors: ShippingFormErrors
       return state;
   }
 }
-
-const initialState = {
-  values: initialShippingValues,
-  errors: {},
-};
 
 
 export function ShippingForm({ values, onChange }: {

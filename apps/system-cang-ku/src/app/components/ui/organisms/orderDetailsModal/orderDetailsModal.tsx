@@ -105,6 +105,12 @@ export function OrderDetailsModal() {
                 <br/>
                 <p className="text-gray-400">Dirección de envío:</p>
                 <p> {orderDetails.shipping_address}</p>
+                {orderDetails.shipping_instructions && (
+                  <div>
+                    <p className="text-gray-400">Instrucciones de entrega:</p>
+                    <p>{orderDetails.shipping_instructions}</p>
+                  </div>
+                )}
               </div>
             </Accordion>
             <Accordion title="Resumen de Productos">
