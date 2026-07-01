@@ -157,6 +157,7 @@ function CartPage() {
               customer_email: orderResponse.customer_email,
               customer_phone: orderResponse.customer_phone,
               shipping_address: orderResponse.shipping_address,
+              shipping_instructions: orderResponse.shipping_instructions,
             }}
             summary={
               <OrderSummary

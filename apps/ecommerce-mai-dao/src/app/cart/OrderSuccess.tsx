@@ -9,6 +9,7 @@ interface OrderSuccessProps {
     customer_email: string;
     customer_phone: string;
     shipping_address: string;
+    shipping_instructions?: string;
   };
   summary: React.ReactNode;
 }
@@ -23,6 +24,7 @@ interface OrderSuccessProps {
     customer_email: string;
     customer_phone: string;
     shipping_address: string;
+    shipping_instructions?: string;
   };
   summary: React.ReactNode;
   showExploreMoreButton?: boolean;
@@ -45,6 +47,12 @@ export const OrderSuccess: React.FC<OrderSuccessProps> = ({ trackingNumber, ship
         <div className="text-lg font-bold mb-1">Enviado a {shippingData.customer_name} {shippingData.customer_last_name}</div>
         <div className="text-gray-700 text-base mb-2 border-b pb-2">
           {shippingData.shipping_address}
+          {shippingData.shipping_instructions && (
+            <div className="text-gray-700 text-base mb-2">
+              <span className="font-semibold">Instrucciones de entrega:</span>
+              <p>{shippingData.shipping_instructions}</p>
+            </div>
+          )}
         </div>
         <div className="text-gray-700 text-base mb-1">{shippingData.customer_email}</div>
         <div className="text-gray-700 text-base">{shippingData.customer_phone}</div>
