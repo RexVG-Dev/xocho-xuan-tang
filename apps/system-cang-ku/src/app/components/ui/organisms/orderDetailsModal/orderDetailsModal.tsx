@@ -31,8 +31,8 @@ export function OrderDetailsModal() {
         setIsLoading(true);
         setError(null);
         try {
-          const data = await apiFetch(`/orders/${orderId}`, { requiresAuth: true });
-          setOrderDetails(data);
+          const data = await apiFetch<OrderDetailsInterface>(`/orders/${orderId}`, { requiresAuth: true });
+          setOrderDetails(data ?? null);
         } catch (err) {
           setError('No se pudieron cargar los detalles de la orden.');
           console.error(err);

@@ -13,6 +13,7 @@ import { OrderDetailsInterface } from '@/shared/interfaces';
 import { Accordion } from '../../molecules';
 
 const statusInfo = {
+  processing: { text: 'Procesando', styles: 'bg-blue-500' },
   packing: { text: 'Empacando', styles: 'bg-violet-500' },
   shipped: { text: 'Enviada', styles: 'bg-amber-400' },
   delivered: { text: 'Entregada', styles: 'bg-green-500' },
@@ -32,7 +33,7 @@ export function OrderDetailsModal() {
         setError(null);
         try {
           const data = await apiFetch(`/orders/${orderId}`, { requiresAuth: true });
-          setOrderDetails(data);
+          setOrderDetails(data as OrderDetailsInterface);
         } catch (err) {
           setError('No se pudieron cargar los detalles de la orden.');
           console.error(err);
@@ -109,12 +110,12 @@ export function OrderDetailsModal() {
             </Accordion>
             <Accordion title="Resumen de Productos">
                 <ul className="px-4 text-sm space-y-2">
-                    {orderDetails.orderDetails.map(item => (
-                        <li key={item.product.sku} className="flex gap-3 items-center">
+                    {orderDetails.items?.map(item => (
+                        <li key={item.sku} className="flex gap-3 items-center">
                             <span>{item.quantity} x</span>
                             <div className="flex flex-col">
-                              <span className="text-base">{item.product.name}</span>
-                              <span className="text-xs text-gray-400">#{item.product.sku}</span>
+                              <span className="text-base">{item.name}</span>
+                              <span className="text-xs text-gray-400">#{item.sku}</span>
 
                             </div>
                         </li>
@@ -126,7 +127,7 @@ export function OrderDetailsModal() {
           <div className="p-6 border-t border-gray-200">
              <div className="flex justify-between items-center text-lg">
                 <span className="font-semibold text-gray-800">Total</span>
-                <span className="font-bold text-green-600">{formatCurrency(parseFloat(orderDetails.total))}</span>
+                <span className="font-bold text-green-600">{formatCurrency(orderDetails.total_amount)}</span>
              </div>
           </div>
         </div>

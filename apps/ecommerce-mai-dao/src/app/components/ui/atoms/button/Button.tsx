@@ -16,7 +16,7 @@ import {
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  color?: ButtonColor;
+  color?: string | ButtonColor;
   rounded?: ButtonRounded;
   className?: string;
   iconButtonPosition?: IconButtonPosition;
@@ -102,7 +102,7 @@ export function Button({
   const styles = clsx(
     baseStyles,
     sizeClasses[size],
-    colorClasses[color][variant],
+    colorClasses[color as keyof typeof colorClasses]?.[variant] || '',
     roundedClasses[rounded],
     {
       'flex-row-reverse': iconButtonPosition === 'right',

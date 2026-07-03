@@ -20,7 +20,7 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-export async function apiFetch(endpoint: string, options: ApiOptions = {}): Promise<unknown> {
+export async function apiFetch<T = unknown>(endpoint: string, options: ApiOptions = {}): Promise<T | null> {
   const { 
     method = 'GET', 
     body, 

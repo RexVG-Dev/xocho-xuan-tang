@@ -22,8 +22,8 @@ export function Summary() {
     async function fetchSummary() {
       try {
         setIsLoading(true);
-        const summaryData = await apiFetch('/summary', { requiresAuth: true });
-        setData(summaryData);
+        const summaryData = await apiFetch<SummaryData>('/summary', { requiresAuth: true });
+        setData(summaryData ?? null);
       } catch (err) {
         setError('No se pudo cargar el resumen.');
         console.error(err);

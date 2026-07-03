@@ -48,7 +48,8 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: true });
+        const categoriesResponse = await apiFetch<CategoryInterface[]>('/categories', { requiresAuth: true });
+        const allCategories = categoriesResponse ?? [];
         setSeasons(allCategories.filter(c => c.type === 'season'));
         setProductCategories(allCategories.filter(c => c.type === 'category'));
       } catch (err) {
@@ -64,7 +65,8 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
       if (mode === 'edit' && bannerId) {
         showLoader({ type: 'get' });
         try {
-          const bannerData: BannerInterface = await apiFetch(`/banners/${bannerId}`, { requiresAuth: true });
+          const bannerResponse = await apiFetch<BannerInterface>(`/banners/${bannerId}`, { requiresAuth: true });
+          const bannerData = bannerResponse ?? ({} as BannerInterface);
           setName(bannerData.name);
           setSeasonId(bannerData.category_id || '');
           // Formatear fechas para los inputs type="date"
@@ -81,7 +83,7 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
             setTargetCategoryCodes(bannerData.target_filters_json.category_codes || []);
             setHasDiscount(bannerData.target_filters_json.has_discount || false);
           }
-        } catch (err) {
+        } catch {
           showNotification({ type: 'error', message: 'No se pudo cargar el banner.' });
           router.push('/banners');
         } finally {
@@ -156,8 +158,9 @@ export function BannerForm({ mode, bannerId }: BannerFormProps) {
       router.push('/banners');
       router.refresh();
 
-    } catch (err: any) {
-      showNotification({ type: 'error', message: err.message || 'Ocurrió un error.' });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Ocurrió un error.';
+      showNotification({ type: 'error', message });
     } finally {
       hideLoader();
     }

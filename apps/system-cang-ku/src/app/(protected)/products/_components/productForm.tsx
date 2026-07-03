@@ -31,9 +31,10 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
   useEffect(() => {
     async function fetchFilterData() {
       try {
-        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: true }) as CategoryInterface[];
-        setCategories(allCategories.filter(c => c.type === 'category'));
-        setSeasons(allCategories.filter(c => c.type === 'season'));
+        const allCategories = await apiFetch<CategoryInterface[]>('/categories', { requiresAuth: true });
+        const normalizedCategories = allCategories ?? [];
+        setCategories(normalizedCategories.filter(c => c.type === 'category'));
+        setSeasons(normalizedCategories.filter(c => c.type === 'season'));
       } catch (err) {
         console.error("Fallo al cargar los datos para los filtros", err);
       }
@@ -46,7 +47,10 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
       if (mode === 'edit' && productId) {
         showLoader({type: 'get'});
         try {
-          const productData = await apiFetch(`/products/${productId}`, { requiresAuth: true }) as Product;
+          const productData = await apiFetch<Product>(`/products/${productId}`, { requiresAuth: true });
+          if (!productData) {
+            throw new Error('No se pudo cargar el producto.');
+          }
           if (productData.discount_type === 'percentage' && productData.discount_value !== null) {
             productData.discount_value = productData.discount_value * 100;
           }
@@ -160,13 +164,13 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
 
           imageFormData.append('sku', state.sku);
 
-          const uploadResponse = await apiFetch('/upload/product-images', {
+          const uploadResponse = await apiFetch<{ urls: string[] }>('/upload/product-images', {
             method: 'POST',
             body: imageFormData,
             isFormData: true,
             requiresAuth: true,
-          }) as { urls: string[] };
-          uploadedUrls = uploadResponse.urls;
+          });
+          uploadedUrls = uploadResponse?.urls ?? [];
         }
 
         // 3. Reconstruir el estado final de las imágenes con las nuevas URLs

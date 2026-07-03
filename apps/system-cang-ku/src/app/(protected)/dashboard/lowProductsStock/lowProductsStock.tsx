@@ -34,8 +34,8 @@ export function LowProductsStock() {
       try {
         setIsLoading(true);
         const endpoint = `/low-stock-products?skip=${skip}&take=${PAGE_SIZE}`;
-        const responseData = await apiFetch(endpoint, { requiresAuth: true });
-        setData(responseData);
+        const responseData = await apiFetch<ApiResponse>(endpoint, { requiresAuth: true });
+        setData(responseData ?? null);
       } catch (err) {
         setError('No se pudo cargar la lista de productos.');
         console.error(err);

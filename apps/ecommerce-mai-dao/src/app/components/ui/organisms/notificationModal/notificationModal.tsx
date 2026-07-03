@@ -23,11 +23,11 @@ const notificationConfig = {
 export function NotificationModal() {
   const { notification, hideNotification } = useNotification();
 
-  if (!notification) {
+  if (!notification || !notification.type) {
     return null;
   }
 
-  const config = notificationConfig[notification.type];
+  const config = notificationConfig[notification.type] || notificationConfig.error;
 
   return (
     <Modal isOpen={!!notification} onClose={hideNotification} border={config.border}>

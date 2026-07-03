@@ -8,6 +8,11 @@ import { sanitizeInput } from '../../utils/sanitize';
 import { apiFetch } from '../api';
 import { useLoading } from '../contexts/useLoading';
 
+interface LoginResponse {
+  token: string;
+  user: unknown;
+}
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,19 +29,19 @@ function Login() {
     });
 
     try {
-      const data = await apiFetch('/login', {
+      const data = await apiFetch<LoginResponse>('/login', {
         method: 'POST',
         body: { email, password },
       });
 
-      if (data.token) {
+      if (data?.token) {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user_info', JSON.stringify(data.user));
       }
 
       router.push('/dashboard');
       router.refresh();
-    } catch (err:any) {
+    } catch (err: unknown) {
       console.error('Login error:', err);
       setError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
     } finally {

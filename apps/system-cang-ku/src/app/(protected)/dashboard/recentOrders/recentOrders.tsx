@@ -58,8 +58,8 @@ export function RecentOrders() {
       try {
         setIsLoading(true);
         const endpoint = `/recent-orders?skip=${skip}&take=${PAGE_SIZE}`;
-        const responseData = await apiFetch(endpoint, { requiresAuth: true });
-        setData(responseData);
+        const responseData = await apiFetch<ApiResponse>(endpoint, { requiresAuth: true });
+        setData(responseData ?? null);
       } catch (err) {
         setError('No se pudieron cargar las órdenes recientes.');
         console.error(err);

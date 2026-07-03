@@ -24,9 +24,10 @@ export const BulkLoad = () => {
   useEffect(() => {
     async function fetchFilterData() {
       try {
-        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: true });
-        setCategories(allCategories.filter(c => c.type === 'category'));
-        setSeasons(allCategories.filter(c => c.type === 'season'));
+        const allCategories = await apiFetch<CategoryInterface[]>('/categories', { requiresAuth: true });
+        const normalizedCategories = allCategories ?? [];
+        setCategories(normalizedCategories.filter(c => c.type === 'category'));
+        setSeasons(normalizedCategories.filter(c => c.type === 'season'));
       } catch (err) {
         console.error("Fallo al cargar los datos para los filtros", err);
       }

@@ -40,3 +40,18 @@ export interface ProductImageInterface {
 export interface CartItem extends ProductInterface {
   quantity: number;
 }
+
+export interface OrderDetailsInterface {
+  id: string;
+  tracking_number: string;
+  status: OrderStatus;
+  order_date: string;
+  total_amount: number;
+  items?: CartItem[];
+  customer_name?: string;
+  customer_email?: string;
+  customer_phone?: string;
+  shipping_address?: string;
+  created_at?: string;
+  updated_at?: string;
+}

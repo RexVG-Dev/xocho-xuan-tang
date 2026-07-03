@@ -78,11 +78,10 @@ export function Banners() {
     async function fetchBanners() {
       showLoader({type:'get'});
       try {
-        const data: BannerInterface[] = await apiFetch('/banners', { requiresAuth: true });
-        setBanners(data);
-      } catch (err) {
+        const data = await apiFetch<BannerInterface[]>('/banners', { requiresAuth: true });
+        setBanners(data ?? []);
+      } catch {
         setError('No se pudieron cargar los banners.');
-        console.error(err);
       } finally {
         hideLoader();
       }

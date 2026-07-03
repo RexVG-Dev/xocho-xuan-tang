@@ -2,6 +2,7 @@ interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: Record<string, any> | FormData;
   isFormData?: boolean;
+  requiresAuth?: boolean;
 }
 
 export async function apiFetch(endpoint: string, options: ApiOptions = {}): Promise<unknown> {

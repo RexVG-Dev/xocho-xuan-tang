@@ -3,7 +3,7 @@ import { ReactNode, ButtonHTMLAttributes } from 'react';
 
 import { useStore } from '@/contexts/useStore';
 
-import { Button } from '../components/ui/atoms/button';
+import { Button } from '../components/ui/atoms/button/Button';
 
 type CartSummaryProps = {
   onNext?: () => void;
@@ -12,7 +12,7 @@ type CartSummaryProps = {
 };
 
 function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
-  const { cart, cartTotal } = useStore();
+  const { cart } = useStore();
   const isCartEmpty = !cart || cart.length === 0;
 
   const calculateSubtotal = () => {

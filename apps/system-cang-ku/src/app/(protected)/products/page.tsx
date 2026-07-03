@@ -19,6 +19,11 @@ import { ProductInterface, DiscountStatus } from './constants';
 
 const PAGE_SIZE = 10;
 
+interface ProductsResponse {
+  products: ProductInterface[];
+  total: number;
+}
+
 function Products() {
   const router = useRouter();
   const { showNotification } = useNotification();
@@ -43,9 +48,10 @@ function Products() {
   useEffect(() => {
     async function fetchFilterData() {
       try {
-        const allCategories: CategoryInterface[] = await apiFetch('/categories', { requiresAuth: false });
-        setCategories(allCategories.filter(c => c.type === 'category'));
-        setSeasons(allCategories.filter(c => c.type === 'season'));
+        const allCategories = await apiFetch<CategoryInterface[]>('/categories', { requiresAuth: false });
+        const normalizedCategories = allCategories ?? [];
+        setCategories(normalizedCategories.filter(c => c.type === 'category'));
+        setSeasons(normalizedCategories.filter(c => c.type === 'season'));
       } catch (err) {
         console.error("Fallo al cargar los datos para los filtros", err);
       }
@@ -75,9 +81,10 @@ function Products() {
         params.append('take', String(PAGE_SIZE));
 
         // 2. Llamar a la API
-        const data = await apiFetch(`/products?${params.toString()}`, { requiresAuth: true });
-        setProducts(data.products || []);
-        setTotalProducts(data.total || 0);
+        const data = await apiFetch<ProductsResponse>(`/products?${params.toString()}`, { requiresAuth: true });
+        const response = data ?? { products: [], total: 0 };
+        setProducts(response.products || []);
+        setTotalProducts(response.total || 0);
       } catch (err) {
         setError('No se pudieron cargar los productos.');
         console.error(err);

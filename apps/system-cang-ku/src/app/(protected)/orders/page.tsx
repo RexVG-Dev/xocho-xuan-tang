@@ -44,8 +44,9 @@ export function Orders() {
       type: 'get',
     });
     try {
-      const allOrders: OrderInterface[] = await apiFetch('/orders', { requiresAuth: true });
-      const grouped = allOrders.reduce((acc, order) => {
+      const allOrders = await apiFetch<OrderInterface[]>('/orders', { requiresAuth: true });
+      const normalizedOrders = allOrders ?? [];
+      const grouped = normalizedOrders.reduce((acc, order) => {
         if (acc[order.status]) {
           acc[order.status].push(order);
         }
