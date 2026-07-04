@@ -45,7 +45,7 @@ export default function HomeClient() {
 
     async function loadHomeData() {
       try {
-        const response = await fetch('/api/home', { cache: 'no-store' });
+        const response = await fetch('/internal/home', { cache: 'no-store' });
         if (!response.ok) {
           throw new Error(`Unable to load home data: ${response.status}`);
         }
