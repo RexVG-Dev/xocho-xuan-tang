@@ -1,13 +1,16 @@
 "use client";
+import { useMemo } from 'react';
 import Carousel from '../ui/organisms/carousel/carousel';
 import Image from 'next/image';
 import { Button } from '../ui/atoms/button';
+import { useCategories } from '../../contexts/category.context';
 
 interface Category {
   name: string;
   description: string;
   image: string;
   categoryId: string;
+  code: string;
 }
 
 const categories: Category[] = [
@@ -15,41 +18,70 @@ const categories: Category[] = [
     name: 'Electrónica',
     description: 'Entra a nuestra sección de electrónica y encuentra todo que necesitas.',
     image: '/assets/categories/technology.png',
-    categoryId: '8ddbd2d1-7c35-49c7-83b1-6d27df0f3a15'
+    categoryId: '',
+    code: 'electronics',
   },
   {
     name: 'Cocina',
     description: 'Entra a nuestra sección de cocina y encuentra todo que necesitas.',
     image: '/assets/categories/kitchen.png',
-    categoryId: '898b4b39-ac46-47bc-996f-58010577c84d'
+    categoryId: '',
+    code: 'kitchen',
   },
   {
     name: 'Cosméticos',
     description: 'Entra a nuestra sección de cosméticos y encuentra todo que necesitas.',
     image: '/assets/categories/makeup.png',
-    categoryId: 'ec6e85e3-df75-48b6-b830-13ad453ba394'
+    categoryId: '',
+    code: 'makeup',
   },
   {
     name: 'Papelería',
     description: 'Entra a nuestra sección de papelería y encuentra todo que necesitas.',
     image: '/assets/categories/stationery.png',
-    categoryId: '560ea695-b157-459d-84fe-71ba7a52fd75'
+    categoryId: '',
+    code: 'stationery',
   },
   {
     name: 'Herramientas',
     description: 'Entra a nuestra sección de herramientas y encuentra todo que necesitas.',
     image: '/assets/categories/tools.png',
-    categoryId: '832b118f-d6c3-4dca-91a7-765a39d1a01e'
+    categoryId: '',
+    code: 'tools',
   },
 ];
 
+function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
 export default function CategoryCarousel() {
+  const { categories: fetchedCategories } = useCategories();
+
+  const categoriesWithResolvedId = useMemo(() => {
+    return categories.map((staticCategory) => {
+      const match = fetchedCategories.find(
+        (apiCategory) =>
+          normalizeText(apiCategory.code) === normalizeText(staticCategory.code)
+      );
+
+      return {
+        ...staticCategory,
+        categoryId: match?.id || '',
+      };
+    });
+  }, [fetchedCategories]);
+
   return (
     <section className="mt-12 rounded-3xl py-12">
       <div className='max-w-5xl mx-auto px-4'>
         <h2 className="text-3xl font-extrabold text-center mb-16">Categorías destacadas</h2>
         <Carousel slidesPerView={2} showArrows={true} showDots={true} loop>
-          {categories.map((cat, idx) => (
+          {categoriesWithResolvedId.map((cat, idx) => (
             <div
               key={idx}
               className="bg-red-600 rounded-3xl p-6 mx-6 flex items-center relative min-h-[250px] max-h-[250px] overflow-visible"
@@ -62,6 +94,7 @@ export default function CategoryCarousel() {
                   variant="solid"
                   rounded="full"
                   className="bg-white text-red-600 font-semibold text-base px-8 py-3"
+                  disabled={!cat.categoryId}
                   onClick={e => {
                     e.stopPropagation();
                     window.location.href = `/listing?category=${encodeURIComponent(cat.name)}&categoryId=${encodeURIComponent(cat.categoryId)}`;
