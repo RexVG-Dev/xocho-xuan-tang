@@ -39,11 +39,51 @@ export const BulkLoad = () => {
     router.push('/products');
   };
 
+  const validateDiscountValue = (discountType: 'percentage' | 'amount' | null, discountValue: number | string, price: number | string) => {
+    if (!discountType || discountValue === '' || discountValue === null) {
+      return true;
+    }
+
+    const parsedDiscountValue = parseFloat(String(discountValue));
+    if (Number.isNaN(parsedDiscountValue)) {
+      return false;
+    }
+
+    if (discountType === 'percentage') {
+      return parsedDiscountValue >= 0 && parsedDiscountValue <= 100;
+    }
+
+    if (discountType === 'amount') {
+      const parsedPrice = parseFloat(String(price));
+      if (Number.isNaN(parsedPrice)) {
+        return false;
+      }
+      return parsedDiscountValue < parsedPrice;
+    }
+
+    return true;
+  };
+
 
   const handleSaveAll = async () => {
     const validRows = state.filter(row => row.sku && row.name && row.price && row.images && row.stock && (row.categoryIds || row.seasonCode));
     if (validRows.length === 0) {
       showNotification({ type: 'error', message: 'No hay productos válidos para guardar.' });
+      return;
+    }
+
+    const invalidDiscountRowIndex = state.findIndex(
+      (row) => !validateDiscountValue(row.discountType, row.discountValue, row.price)
+    );
+
+    if (invalidDiscountRowIndex !== -1) {
+      const invalidRow = state[invalidDiscountRowIndex];
+      showNotification({
+        type: 'error',
+        message: invalidRow.discountType === 'percentage'
+          ? `Fila ${invalidDiscountRowIndex + 1}: el descuento por porcentaje debe estar entre 0 y 100.`
+          : `Fila ${invalidDiscountRowIndex + 1}: el descuento por monto debe ser menor que el precio.`,
+      });
       return;
     }
 
@@ -71,9 +111,14 @@ export const BulkLoad = () => {
         const allCategoryIds = [...row.categoryIds, row.seasonCode].filter(Boolean);
         allCategoryIds.forEach(id => formData.append('category_ids', id));
 
-        if (row.discountType) {
+        if (row.discountType && row.discountValue !== '' && row.discountValue !== null) {
           formData.append('discount_type', row.discountType);
-          formData.append('discount_value', String(row.discountValue));
+          formData.append(
+            'discount_value',
+            row.discountType === 'percentage'
+              ? String(parseFloat(String(row.discountValue)) / 100)
+              : String(row.discountValue)
+          );
         }
 
         const mainImage = row.images.find(img => img.isMain && img.file);

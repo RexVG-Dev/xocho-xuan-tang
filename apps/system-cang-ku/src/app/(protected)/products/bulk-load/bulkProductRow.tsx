@@ -4,18 +4,24 @@ import { Input, Accordion } from '@/app/components/ui';
 import { CategoryInterface } from '@/shared/types/category';
 import { ProductFormState } from '../_components/productFormReducer';
 import { ImageUploader } from '../_components/imageUploader';
+import { BulkProductFormAction } from './bulkProductFormReducer';
+
+type ImageUploaderAction =
+  | { type: 'SET_IMAGES'; images: ProductFormState['images'] }
+  | { type: 'SET_MAIN_IMAGE'; index: number }
+  | { type: 'REMOVE_IMAGE'; index: number };
 
 interface BulkProductRowProps {
   rowData: ProductFormState;
   rowIndex: number;
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<BulkProductFormAction>;
   categories: CategoryInterface[];
   seasons: CategoryInterface[];
 }
 
 export function BulkProductRow({ rowData, rowIndex, dispatch, categories, seasons }: BulkProductRowProps) {
   // Función para despachar cambios de un campo específico
-  const handleFieldChange = (field: keyof ProductFormState, value: any) => {
+  const handleFieldChange = (field: keyof ProductFormState, value: ProductFormState[keyof ProductFormState] | null) => {
     dispatch({ type: 'UPDATE_ROW_FIELD', rowIndex, field, value });
   };
   
@@ -27,13 +33,39 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
   const handleDiscountChange = (value: 'percentage' | 'amount') => {
     if (rowData.discountType === value) {
       handleFieldChange('discountType', null);
-      handleFieldChange('discountValue', ''); 
     } else {
       handleFieldChange('discountType', value);
     }
   };
 
-  const imageUploaderDispatch = (action: any) => {
+  const validateDiscountValue = () => {
+    if (!rowData.discountType || rowData.discountValue === '' || rowData.discountValue === null) {
+      return true;
+    }
+
+    const discountValue = parseFloat(String(rowData.discountValue));
+    if (Number.isNaN(discountValue)) {
+      return false;
+    }
+
+    if (rowData.discountType === 'percentage') {
+      return discountValue >= 0 && discountValue <= 100;
+    }
+
+    if (rowData.discountType === 'amount') {
+      const price = parseFloat(String(rowData.price));
+      if (Number.isNaN(price)) {
+        return false;
+      }
+      return discountValue < price;
+    }
+
+    return true;
+  };
+
+  const isDiscountInvalid = !validateDiscountValue();
+
+  const imageUploaderDispatch = (action: ImageUploaderAction) => {
     switch(action.type) {
       case 'SET_IMAGES':
         dispatch({ type: 'SET_ROW_IMAGES', rowIndex, images: action.images });
@@ -102,13 +134,20 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
                 </div>
               </div>
               <Input
-                label="Valor del Descuento"
+                label={rowData.discountType === 'percentage' ? 'Descuento por porcentaje' : 'Descuento por monto'}
                 type="number"
-                placeholder="0.00"
+                placeholder={rowData.discountType === 'percentage' ? '0-100 %' : '0.00'}
                 disabled={!rowData.discountType}
                 value={rowData.discountValue}
                 onChange={(e) => handleFieldChange('discountValue', e.target.value)}
               />
+              {isDiscountInvalid && (
+                <p className="text-sm text-red-600">
+                  {rowData.discountType === 'percentage'
+                    ? 'El descuento por porcentaje debe estar entre 0 y 100.'
+                    : 'El descuento por monto debe ser menor que el precio.'}
+                </p>
+              )}
             </div>
           </Accordion>
         </div>
@@ -126,7 +165,7 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
           className="w-48 border border-gray-300 rounded-md flex-1"
         >
           <Accordion title="Categorías" className="relative" padding={false}>
-            <div className="absolute top-full left-[-100px] z-10 p-4 border border-gray-100 bg-gray-50 w-[500px] rounded grid grid-cols-1 gap-1 md:grid-cols-2 gap-2">
+            <div className="absolute top-full left-[-100px] z-10 p-4 border border-gray-100 bg-gray-50 w-[500px] rounded grid grid-cols-1 md:grid-cols-2 gap-2">
                 {categories.map(cat => (
                   <label key={cat.id} className="flex items-center text-sm">
                     <input
@@ -146,7 +185,7 @@ export function BulkProductRow({ rowData, rowIndex, dispatch, categories, season
           className="w-48 border border-gray-300 rounded-md flex-1"
         >
           <Accordion title="Imágenes" className="relative" padding={false}>
-            <div className="absolute top-full right-0 z-10 p-4 bg-gray-50 rounded-md z-10 w-[600px] text-left">
+            <div className="absolute top-full right-0 z-10 p-4 bg-gray-50 rounded-md w-[600px] text-left">
               {/* --- 3. INTEGRAR EL IMAGEUPLOADER REAL --- */}
               <ImageUploader 
                 images={rowData.images}

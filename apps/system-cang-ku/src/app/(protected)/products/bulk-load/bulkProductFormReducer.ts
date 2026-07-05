@@ -19,20 +19,29 @@ export const initialBulkState: BulkFormState = Array(30).fill({
 });
 
 // Definimos las acciones que podemos realizar en el formulario masivo
-type Action =
-  | { type: 'UPDATE_ROW_FIELD'; rowIndex: number; field: keyof ProductFormState; value: any }
+export type BulkProductFormAction =
+  | {
+      type: 'UPDATE_ROW_FIELD';
+      rowIndex: number;
+      field: keyof ProductFormState;
+      value: ProductFormState[keyof ProductFormState] | null;
+    }
   | { type: 'TOGGLE_ROW_CATEGORY'; rowIndex: number; categoryId: string }
   | { type: 'SET_ROW_IMAGES'; rowIndex: number; images: ProductFormState['images'] }
   | { type: 'SET_ROW_MAIN_IMAGE'; rowIndex: number; imageIndex: number }
   | { type: 'REMOVE_ROW_IMAGE'; rowIndex: number; imageIndex: number };
   // Aquí podríamos añadir acciones para las imágenes de cada fila en el futuro
 
-export function bulkProductFormReducer(state: BulkFormState, action: Action): BulkFormState {
+export function bulkProductFormReducer(state: BulkFormState, action: BulkProductFormAction): BulkFormState {
   switch (action.type) {
     case 'UPDATE_ROW_FIELD':
-      return state.map((row, index) =>
-        index === action.rowIndex ? { ...row, [action.field]: action.value } : row
-      );
+      return state.map((row, index) => {
+        if (index !== action.rowIndex) return row;
+        if (action.field === 'discountType' && !action.value) {
+          return { ...row, discountType: null, discountValue: '' };
+        }
+        return { ...row, [action.field]: action.value };
+      });
 
     case 'TOGGLE_ROW_CATEGORY':
       return state.map((row, index) => {
