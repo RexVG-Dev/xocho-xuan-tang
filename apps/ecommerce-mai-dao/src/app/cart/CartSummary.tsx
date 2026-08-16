@@ -2,6 +2,7 @@
 import { ReactNode, ButtonHTMLAttributes } from 'react';
 
 import { useStore } from '@/contexts/useStore';
+import { calculateShippingCost } from '@/shared/utils';
 
 import { Button } from '../components/ui/atoms/button/Button';
 
@@ -32,6 +33,8 @@ function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
   };
 
   const subtotal = calculateSubtotal();
+  const shippingCost = calculateShippingCost(subtotal);
+  const total = subtotal + shippingCost;
 
   return (
     <div className="bg-white rounded-2xl shadow p-6 w-full max-w-xs">
@@ -42,12 +45,16 @@ function CartSummary({ onNext, children, nextButtonProps }: CartSummaryProps) {
       </div>
       <div className="flex justify-between text-gray-600 mb-2">
         <span>Envío</span>
-        <span className="font-semibold text-green-600">GRATIS</span>
+        {shippingCost === 0 ? (
+          <span className="font-semibold text-green-600">GRATIS</span>
+        ) : (
+          <span>${shippingCost.toFixed(2)}</span>
+        )}
       </div>
       <div className="border-t my-2"></div>
       <div className="flex justify-between text-lg font-bold mb-4">
         <span>Total</span>
-        <span>${subtotal.toFixed(2)}</span>
+        <span>${total.toFixed(2)}</span>
       </div>
       {children}
       {onNext && (

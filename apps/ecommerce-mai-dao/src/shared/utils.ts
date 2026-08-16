@@ -1,5 +1,12 @@
 import { ProductInterface } from "./interfaces";
 
+export const SHIPPING_COST = 200;
+export const FREE_SHIPPING_THRESHOLD = 2500;
+
+export const calculateShippingCost = (subtotal: number) => {
+  return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+};
+
 export const calculateDiscountedPrice = (product: ProductInterface) => {
   if (!product) return null;
 

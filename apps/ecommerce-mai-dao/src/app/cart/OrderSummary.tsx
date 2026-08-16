@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { calculateDiscountedPrice } from '@/shared/utils';
+import { calculateDiscountedPrice, calculateShippingCost } from '@/shared/utils';
 import { ProductInterface } from '@/shared/interfaces';
 
 interface OrderSummaryProps {
@@ -14,6 +14,11 @@ interface OrderSummaryProps {
 }
 
 export const OrderSummary: React.FC<OrderSummaryProps> = ({ total, orderDetails }) => {
+  const subtotal = orderDetails.reduce(
+    (sum, item) => sum + Number(calculateDiscountedPrice(item.product)) * item.quantity,
+    0
+  );
+  const shippingCost = calculateShippingCost(subtotal);
 
   return (
     <div className="bg-white rounded-2xl shadow p-6 w-full max-w-xs">
@@ -28,7 +33,11 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({ total, orderDetails 
       </div>
       <div className="flex justify-between text-gray-600 mb-2">
         <span>Envío</span>
-        <span className="font-semibold text-green-600">GRATIS</span>
+        {shippingCost === 0 ? (
+          <span className="font-semibold text-green-600">GRATIS</span>
+        ) : (
+          <span>${shippingCost.toFixed(2)}</span>
+        )}
       </div>
       <div className="border-t my-2"></div>
       <div className="flex justify-between text-lg font-bold mb-4">
